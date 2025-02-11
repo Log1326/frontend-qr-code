@@ -6,11 +6,11 @@ import { ShareButton } from './ShareButton';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from './ui/select';
 
 type FileExtension = 'svg' | 'png' | 'jpeg' | 'webp';

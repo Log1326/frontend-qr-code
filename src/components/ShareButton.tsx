@@ -13,7 +13,7 @@ interface ShareButtonProps {
 export const ShareButton: React.FC<ShareButtonProps> = ({
   title = 'Share',
   text = 'Check it out!',
-  qrCode
+  qrCode,
 }) => {
   const isMobile = useIsMobile();
   const { share, shareError } = useShare();
@@ -24,15 +24,17 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
     try {
       const blob = await qrCode.getRawData('png');
       if (!blob) return;
+
       const file = new File([blob], 'qrcode.png', { type: 'image/png' });
+
       try {
         await share({
           title,
           text,
           url: window.location.href,
-          files: [file]
+          files: [file],
         });
-      } catch  {
+      } catch {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = async () => {
@@ -40,7 +42,7 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
           await share({
             title,
             text: `${text}\n\n${base64data}`,
-            url: window.location.href
+            url: window.location.href,
           });
         };
       }

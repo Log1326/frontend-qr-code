@@ -35,13 +35,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://your-domain.com",
+    url: "https://qr-code-4dbel2v8m-log1326s-projects.vercel.app",
     title: "QR Code Generator | Create Custom QR Codes Online",
     description: "Free online QR code generator. Create custom QR codes for URLs, text, vCards, and more.",
     siteName: "QR Code Generator",
     images: [
       {
-        url: "https://your-domain.com/og-image.jpg",
+        url: "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg",
         width: 1200,
         height: 630,
         alt: "QR Code Generator Preview",

@@ -15,7 +15,7 @@ import {
 
 type FileExtension = 'svg' | 'png' | 'jpeg' | 'webp';
 
-const houseIcons = [
+const houseIcons:string[] = [
   '/house-1.svg',
   '/house-2.svg',
   '/house-3.svg',
@@ -36,7 +36,7 @@ const houseIcons = [
   '/house-18.svg',
 ];
 
-const gradientColors = [
+const gradientColors:string[][] = [
   ['#FFDEE9', '#B5FFFC'], // Розовый → Голубой
   ['#D4FC79', '#96E6A1'], // Лаймовый → Зеленый
   ['#FFF1EB', '#ACE0F9'], // Бежевый → Голубой
@@ -63,7 +63,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
   const [color1, color2] =
     gradientColors[Math.floor(Math.random() * gradientColors.length)];
 
-  const saveQRCodeToDatabase = async (qrCodeInstance: QRCodeStyling) => {
+  const saveQRCodeToDatabase = async (qrCodeInstance: QRCodeStyling):Promise<void> => {
     try {
       const recipeId = data?.split('/').pop();
       if (!recipeId) return;
@@ -91,7 +91,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
   useEffect(() => {
     if (!data) return;
 
-    const qr = new QRCodeStyling({
+    const qr: QRCodeStyling = new QRCodeStyling({
       type: 'canvas',
       shape: 'square',
       width: 300,
@@ -158,7 +158,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
     }
   }, [qrCode]);
 
-  const onDownloadClick = () => {
+  const onDownloadClick = ():void =>{
     if (qrCode) qrCode.download({ extension: fileExt });
   };
   if (!data) return null;
@@ -195,7 +195,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
           Check
         </Button>
         <div className="absolute right-3 top-3">
-          <ShareButton  qrCode={qrCode}  />
+          <ShareButton qrCode={qrCode} />
         </div>
       </div>
     </div>

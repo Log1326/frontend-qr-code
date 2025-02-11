@@ -8,13 +8,13 @@ import { Button } from './ui/button';
 interface ShareButtonProps {
   title?: string;
   text?: string;
-  qrCode: QRCodeStyling | null
+  qrCode: QRCodeStyling | null;
 }
 
 export const ShareButton: React.FC<ShareButtonProps> = ({
   title = 'Share',
   text = 'Check it out!',
-  qrCode
+  qrCode,
 }) => {
   const isMobile = useIsMobile();
   const { share, shareError } = useShare();
@@ -27,17 +27,17 @@ export const ShareButton: React.FC<ShareButtonProps> = ({
     };
 
     if (qrCode) {
-          try {
-            const blob = await qrCode.getRawData('png');
-            if (blob) {
-              const file = new File([blob], 'qrcode.png', { type: 'image/png' });
-              const base64Image = await fileToBase64(file);
-              shareData.text = `${text}\n\n${base64Image}`;
-            }
-          } catch (error) {
-            console.error('Error preparing image for share:', error);
-          }
+      try {
+        const blob = await qrCode.getRawData('png');
+        if (blob) {
+          const file = new File([blob], 'qrcode.png', { type: 'image/png' });
+          const base64Image = await fileToBase64(file);
+          shareData.text = `${text}\n\n${base64Image}`;
         }
+      } catch (error) {
+        console.error('Error preparing image for share:', error);
+      }
+    }
     await share(shareData);
   };
   if (isMobile)

@@ -21,8 +21,8 @@ export const useQRCode = () => {
     return new QRCodeStyling({
       type: 'canvas',
       shape: 'square',
-      width: 400,
-      height: 400,
+      width: 300,
+      height: 300,
       data: data,
       margin: 10,
       qrOptions: {

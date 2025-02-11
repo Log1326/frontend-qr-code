@@ -4,7 +4,6 @@ import QRCodeStyling from 'qr-code-styling';
 import { useEffect, useRef, useState } from 'react';
 import { ShareButton } from './ShareButton';
 import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 import {
   Select,
   SelectContent,
@@ -167,15 +166,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
   return (
     <div className="relative flex flex-col items-center gap-4 rounded-lg p-4 shadow-md ring-1 ring-gray-300">
       <h2 className="text-lg font-semibold">QR Code Generator</h2>
-      <Dialog>
-        <DialogTrigger asChild>
-          <div className="rounded-xl border p-2" ref={ref} />
-        </DialogTrigger>
-        <DialogContent>
-          <div className="h-full w-full rounded-xl border" ref={ref} />
-        </DialogContent>
-      </Dialog>
-
+      <div className="rounded-xl border p-2" ref={ref} />
       <div className="flex w-full items-center justify-around gap-2">
         <Select
           value={fileExt}

@@ -6,34 +6,34 @@ import { ShareButton } from './ShareButton';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from './ui/select';
 
 type FileExtension = 'svg' | 'png' | 'jpeg' | 'webp';
 
 const houseIcons: string[] = [
-  '/house-1.svg',
-  '/house-2.svg',
-  '/house-3.svg',
-  '/house-4.svg',
-  '/house-5.svg',
-  '/house-6.svg',
-  '/house-7.svg',
-  '/house-8.svg',
-  '/house-9.svg',
-  '/house-10.svg',
-  '/house-11.svg',
-  '/house-12.svg',
-  '/house-13.svg',
-  '/house-14.svg',
-  '/house-15.svg',
-  '/house-16.svg',
-  '/house-17.svg',
-  '/house-18.svg',
+  '/images/house-1.svg',
+  '/images/house-2.svg',
+  '/images/house-3.svg',
+  '/images/house-4.svg',
+  '/images/house-5.svg',
+  '/images/house-6.svg',
+  '/images/house-7.svg',
+  '/images/house-8.svg',
+  '/images/house-9.svg',
+  '/images/house-10.svg',
+  '/images/house-11.svg',
+  '/images/house-12.svg',
+  '/images/house-13.svg',
+  '/images/house-14.svg',
+  '/images/house-15.svg',
+  '/images/house-16.svg',
+  '/images/house-17.svg',
+  '/images/house-18.svg',
 ];
 
 const gradientColors: string[][] = [

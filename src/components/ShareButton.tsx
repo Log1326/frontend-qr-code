@@ -1,6 +1,5 @@
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useShare } from '@/hooks/useShare';
-import { fileToBase64 } from '@/lib/fileToBase64';
 import { Share } from 'lucide-react';
 import QRCodeStyling from 'qr-code-styling';
 import { Button } from './ui/button';
@@ -14,32 +13,42 @@ interface ShareButtonProps {
 export const ShareButton: React.FC<ShareButtonProps> = ({
   title = 'Share',
   text = 'Check it out!',
-  qrCode,
+  qrCode
 }) => {
   const isMobile = useIsMobile();
   const { share, shareError } = useShare();
 
   const handleShare = async (): Promise<void> => {
-    const shareData = {
-      title,
-      text,
-      url: window.location.href,
-    };
+    if (!qrCode) return;
 
-    if (qrCode) {
+    try {
+      const blob = await qrCode.getRawData('png');
+      if (!blob) return;
+      const file = new File([blob], 'qrcode.png', { type: 'image/png' });
       try {
-        const blob = await qrCode.getRawData('png');
-        if (blob) {
-          const file = new File([blob], 'qrcode.png', { type: 'image/png' });
-          const base64Image = await fileToBase64(file);
-          shareData.text = `${text}\n\n${base64Image}`;
-        }
-      } catch (error) {
-        console.error('Error preparing image for share:', error);
+        await share({
+          title,
+          text,
+          url: window.location.href,
+          files: [file]
+        });
+      } catch  {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = async () => {
+          const base64data = reader.result as string;
+          await share({
+            title,
+            text: `${text}\n\n${base64data}`,
+            url: window.location.href
+          });
+        };
       }
+    } catch (error) {
+      console.error('Error sharing:', error);
     }
-    await share(shareData);
   };
+
   if (isMobile)
     return (
       <div>

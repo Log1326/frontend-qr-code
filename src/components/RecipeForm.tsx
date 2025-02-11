@@ -1,11 +1,11 @@
 'use client';
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Trash } from 'lucide-react';
@@ -15,11 +15,11 @@ import { z } from 'zod';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from './ui/select';
 import { Textarea } from './ui/textarea';
 
@@ -63,7 +63,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
     name: 'parameters',
   });
 
-  const onSubmit = async (data: RecipeFormData):Promise<void> => {
+  const onSubmit = async (data: RecipeFormData): Promise<void> => {
     setIsLoading(true);
     try {
       const formData = new FormData();
@@ -115,7 +115,8 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
   };
 
   const handleFileChange =
-    (index: number) => (e: React.ChangeEvent<HTMLInputElement>):void => {
+    (index: number) =>
+    (e: React.ChangeEvent<HTMLInputElement>): void => {
       const file = e.target.files?.[0];
       form.setValue(`parameters.${index}.value`, file ? file.name : '');
     };

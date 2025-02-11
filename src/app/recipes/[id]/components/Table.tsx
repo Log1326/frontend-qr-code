@@ -43,9 +43,11 @@ const renderers = {
 type RecipeWithParameters = Prisma.RecipeGetPayload<{
   include: {
     parameters: true;
-  }
+  };
 }>;
-export const Table: React.FC<{recipe:RecipeWithParameters}> = ({ recipe }) => {
+export const Table: React.FC<{ recipe: RecipeWithParameters }> = ({
+  recipe,
+}) => {
   const downloadAsDoc = async () => {
     const doc = new Document({
       sections: [

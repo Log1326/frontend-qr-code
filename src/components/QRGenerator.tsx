@@ -6,16 +6,16 @@ import { ShareButton } from './ShareButton';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from './ui/select';
 
 type FileExtension = 'svg' | 'png' | 'jpeg' | 'webp';
 
-const houseIcons:string[] = [
+const houseIcons: string[] = [
   '/house-1.svg',
   '/house-2.svg',
   '/house-3.svg',
@@ -36,7 +36,7 @@ const houseIcons:string[] = [
   '/house-18.svg',
 ];
 
-const gradientColors:string[][] = [
+const gradientColors: string[][] = [
   ['#FFDEE9', '#B5FFFC'], // Розовый → Голубой
   ['#D4FC79', '#96E6A1'], // Лаймовый → Зеленый
   ['#FFF1EB', '#ACE0F9'], // Бежевый → Голубой
@@ -63,7 +63,9 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
   const [color1, color2] =
     gradientColors[Math.floor(Math.random() * gradientColors.length)];
 
-  const saveQRCodeToDatabase = async (qrCodeInstance: QRCodeStyling):Promise<void> => {
+  const saveQRCodeToDatabase = async (
+    qrCodeInstance: QRCodeStyling,
+  ): Promise<void> => {
     try {
       const recipeId = data?.split('/').pop();
       if (!recipeId) return;
@@ -158,7 +160,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
     }
   }, [qrCode]);
 
-  const onDownloadClick = ():void =>{
+  const onDownloadClick = (): void => {
     if (qrCode) qrCode.download({ extension: fileExt });
   };
   if (!data) return null;

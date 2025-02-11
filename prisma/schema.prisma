@@ -1,0 +1,30 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Recipe {
+  id          String     @id @default(uuid())
+  title       String
+  parameters  Parameter[]
+  createdAt   DateTime   @default(now())
+}
+
+model Parameter {
+  id        String     @id @default(uuid())
+  type      FieldType
+  value     String
+  recipe    Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId  String
+  order     Int
+}
+
+enum FieldType {
+  TEXT
+  AREA
+  FILE
+}

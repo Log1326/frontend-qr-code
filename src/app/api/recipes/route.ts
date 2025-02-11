@@ -68,32 +68,3 @@ export async function POST(req: Request) {
     );
   }
 }
-export async function PUT(req: Request) {
-  try {
-    const formData = await req.formData();
-    const id = formData.get('id') as string;
-    const qrCodeFile = formData.get('qrCode') as File;
-
-    if (!id || !qrCodeFile) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 },
-      );
-    }
-
-    const qrCodeBase64 = await fileToBase64(qrCodeFile);
-    await prisma.recipe.update({
-      where: { id },
-      data: { qrCode: qrCodeBase64 },
-    });
-    return new NextResponse(null, { status: 200 });
-  } catch (error) {
-    return NextResponse.json(
-      {
-        error: 'Failed to update recipe',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 },
-    );
-  }
-}

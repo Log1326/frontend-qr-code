@@ -48,10 +48,9 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
   const form = useForm<RecipeFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
+      title: 'tile',
       parameters: [
-        { name: 'Title', type: 'TEXT', value: '', order: 0 },
-        { name: 'Others', type: 'AREA', value: '', order: 1 },
+        { name: 'Title', type: 'TEXT', value: 'some data', order: 0 },
       ],
     },
   });

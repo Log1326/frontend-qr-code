@@ -6,7 +6,8 @@ export const useIsMobile = (): boolean => {
   useEffect(() => {
     const checkDevice = (): void => {
       const userAgent: string = navigator.userAgent.toLowerCase();
-      const mobileDevices: RegExp = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
+      const mobileDevices: RegExp =
+        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
 
       setIsMobile(mobileDevices.test(userAgent));
     };

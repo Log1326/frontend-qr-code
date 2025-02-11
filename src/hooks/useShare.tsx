@@ -23,7 +23,8 @@ export const useShare = (): ShareResult => {
         await navigator.share(data);
         return true;
       } catch (error) {
-        const err = error instanceof Error ? error : new Error('Unknown sharing error');
+        const err =
+          error instanceof Error ? error : new Error('Unknown sharing error');
         setShareError(err);
         return false;
       }
@@ -32,7 +33,9 @@ export const useShare = (): ShareResult => {
         await navigator.clipboard.writeText(data.url);
         return true;
       } catch (error) {
-        const err = new Error('Sharing is not supported on this device' + error);
+        const err = new Error(
+          'Sharing is not supported on this device' + error,
+        );
         setShareError(err);
         return false;
       }

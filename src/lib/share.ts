@@ -3,5 +3,7 @@ export const isShareSupported = (): boolean => {
 };
 export const isMobileDevice = (): boolean => {
   const userAgent = navigator.userAgent.toLowerCase();
-  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+    userAgent,
+  );
 };

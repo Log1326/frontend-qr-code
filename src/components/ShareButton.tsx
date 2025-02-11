@@ -1,65 +1,44 @@
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { useShare } from '@/hooks/useShare';
 import { Share } from 'lucide-react';
 import QRCodeStyling from 'qr-code-styling';
 import { Button } from './ui/button';
 
 interface ShareButtonProps {
-  title?: string;
-  text?: string;
   qrCode: QRCodeStyling | null;
+  url: string;
 }
 
-export const ShareButton: React.FC<ShareButtonProps> = ({
-  title = 'Share',
-  text = 'Check it out!',
-  qrCode,
-}) => {
+export const ShareButton: React.FC<ShareButtonProps> = ({ qrCode, url }) => {
   const isMobile = useIsMobile();
-  const { share, shareError } = useShare();
 
   const handleShare = async (): Promise<void> => {
     if (!qrCode) return;
-
     try {
       const blob = await qrCode.getRawData('png');
       if (!blob) return;
-
       const file = new File([blob], 'qrcode.png', { type: 'image/png' });
-
-      try {
-        await share({
-          title,
-          text,
-          url: window.location.href,
-          files: [file],
-        });
-      } catch {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = async () => {
-          const base64data = reader.result as string;
-          await share({
-            title,
-            text: `${text}\n\n${base64data}`,
-            url: window.location.href,
-          });
-        };
+      const filesArray = [file];
+      if (navigator.canShare && navigator.canShare({ files: filesArray })) {
+        await navigator
+          .share({
+            files: filesArray,
+            title: 'QR Code',
+            url,
+          })
+          .then(() => console.log('Share was successful.'))
+          .catch((error) => console.log('Sharing failed', error));
       }
     } catch (error) {
       console.error('Error sharing:', error);
     }
   };
 
-  if (isMobile)
+  if (isMobile) {
     return (
-      <div>
-        <Button onClick={handleShare} variant="outline">
-          <Share />
-        </Button>
-        {shareError && (
-          <p className="error-message">Error: {shareError.message}</p>
-        )}
-      </div>
+      <Button onClick={handleShare} variant="outline">
+        <Share />
+      </Button>
     );
+  }
+  return null;
 };

@@ -92,7 +92,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
 
   useEffect(() => {
     if (!data) return;
-
+    console.log(data);
     const qr: QRCodeStyling = new QRCodeStyling({
       type: 'canvas',
       shape: 'square',
@@ -197,7 +197,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
           Check
         </Button>
         <div className="absolute right-3 top-3">
-          <ShareButton qrCode={qrCode} />
+          <ShareButton qrCode={qrCode} url={data} />
         </div>
       </div>
     </div>

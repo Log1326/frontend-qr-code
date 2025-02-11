@@ -1,27 +1,6 @@
 import QRCodeStyling from 'qr-code-styling';
 import { useCallback } from 'react';
 
-const houseIcons: string[] = [
-  '/images/house-1.svg',
-  '/images/house-2.svg',
-  '/images/house-3.svg',
-  '/images/house-4.svg',
-  '/images/house-5.svg',
-  '/images/house-6.svg',
-  '/images/house-7.svg',
-  '/images/house-8.svg',
-  '/images/house-9.svg',
-  '/images/house-10.svg',
-  '/images/house-11.svg',
-  '/images/house-12.svg',
-  '/images/house-13.svg',
-  '/images/house-14.svg',
-  '/images/house-15.svg',
-  '/images/house-16.svg',
-  '/images/house-17.svg',
-  '/images/house-18.svg',
-];
-
 const gradientColors: string[][] = [
   ['#FFDEE9', '#B5FFFC'], // Розовый → Голубой
   ['#D4FC79', '#96E6A1'], // Лаймовый → Зеленый
@@ -36,8 +15,6 @@ const gradientColors: string[][] = [
 ];
 export const useQRCode = () => {
   const generateQRCode = useCallback((data: string) => {
-    const randomHouse =
-      houseIcons[Math.floor(Math.random() * houseIcons.length)];
     const [color1, color2] =
       gradientColors[Math.floor(Math.random() * gradientColors.length)];
 
@@ -76,7 +53,6 @@ export const useQRCode = () => {
         round: 0,
         color: '#ffffff',
       },
-      image: randomHouse,
       cornersSquareOptions: {
         type: 'dot',
         color: '#000000',

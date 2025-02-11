@@ -62,9 +62,11 @@ export const Table: React.FC<{ recipe: RecipeWithParameters }> = ({
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <QRGenerator
-                data={`${window.location.origin}/recipes/${recipe.id}`}
-              />
+              <AspectRatio ratio={16 / 9} className="bg-muted">
+                <QRGenerator
+                  data={`${window.location.origin}/recipes/${recipe.id}`}
+                />
+              </AspectRatio>
             </DialogContent>
           </Dialog>
         </div>

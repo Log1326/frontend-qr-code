@@ -91,7 +91,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange>
           <div className="flex min-h-screen flex-col items-center gap-6 bg-background p-3 text-foreground lg:p-20">
-            <div className="absolute bottom-4 right-4 z-50 lg:top-4">
+            <div className="absolute bottom-4 right-4 z-50">
               <ModeToggle />
             </div>
             {children}

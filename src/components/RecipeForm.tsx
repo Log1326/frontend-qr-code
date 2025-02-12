@@ -7,6 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { getOrigin } from '@/lib/getOrigin';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Trash } from 'lucide-react';
@@ -23,7 +24,6 @@ import {
   SelectValue,
 } from './ui/select';
 import { Textarea } from './ui/textarea';
-import { useIsMobile } from '@/hooks/useIsMobile';
 
 const parameterSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -51,9 +51,9 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
   const form = useForm<RecipeFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: 'tile',
+      title: 'Имя сотрудка',
       parameters: [
-        { name: 'Title', type: 'AREA', value: 'some data', order: 0 },
+        { name: 'Имя клиента', type: 'AREA', value: 'Интересующая информация которая поможет понять что происходит тут', order: 0 },
       ],
     },
   });

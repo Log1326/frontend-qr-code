@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from './ui/select';
 import { Textarea } from './ui/textarea';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 const parameterSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -46,12 +47,13 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
   onQRCodeGenerated,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const isMobile = useIsMobile();
   const form = useForm<RecipeFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: 'tile',
       parameters: [
-        { name: 'Title', type: 'TEXT', value: 'some data', order: 0 },
+        { name: 'Title', type: 'AREA', value: 'some data', order: 0 },
       ],
     },
   });
@@ -133,21 +135,22 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
         />
 
         <div className="space-y-4">
-          <Button
-            type="button"
-            variant="primary"
-            className="w-full"
-            onClick={() =>
-              append({
-                name: `Parameter ${fields.length + 1}`,
-                type: 'TEXT',
-                value: '',
-                order: fields.length,
-              })
-            }>
-            Add Parameter
-          </Button>
-
+          {!isMobile && (
+            <Button
+              type="button"
+              variant="primary"
+              className="w-full"
+              onClick={() =>
+                append({
+                  name: `Parameter ${fields.length + 1}`,
+                  type: 'TEXT',
+                  value: '',
+                  order: fields.length,
+                })
+              }>
+              Add Parameter
+            </Button>
+          )}
           {fields.map((field, index) => (
             <div
               key={field.id}

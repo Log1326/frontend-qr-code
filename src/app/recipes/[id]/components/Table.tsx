@@ -61,7 +61,7 @@ export const Table: React.FC<{ recipe: RecipeWithParameters }> = ({
                 <QrCode />
               </Button>
             </DialogTrigger>
-            <DialogContent className='h-full w-full'>
+            <DialogContent className="h-full w-full">
               <AspectRatio ratio={16 / 9} className="bg-muted">
                 <QRGenerator
                   data={`${window.location.origin}/recipes/${recipe.id}`}

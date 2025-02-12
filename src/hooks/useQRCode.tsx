@@ -1,26 +1,48 @@
-import QRCodeStyling from 'qr-code-styling';
+import QRCodeStyling, {
+  CornerDotType,
+  CornerSquareType,
+  DotType,
+  ShapeType,
+} from 'qr-code-styling';
 import { useCallback } from 'react';
 
+// Обновленные цветовые комбинации с высоким контрастом
 const gradientColors: string[][] = [
-  ['#FFDEE9', '#B5FFFC'], // Розовый → Голубой
-  ['#D4FC79', '#96E6A1'], // Лаймовый → Зеленый
-  ['#FFF1EB', '#ACE0F9'], // Бежевый → Голубой
-  ['#FFD3A5', '#FD6585'], // Персиковый → Розовый
-  ['#F3E7E9', '#E3EEFF'], // Светло-розовый → Светло-голубой
-  ['#C2E9FB', '#A1C4FD'], // Нежный голубой градиент
-  ['#FAACA8', '#DDD6F3'], // Персиковый → Сиреневый
-  ['#FF9A9E', '#FAD0C4'], // Розовый → Лососевый
-  ['#B5FFFC', '#E8F0FF'], // Бирюзовый → Светлый голубой
-  ['#FAD0C4', '#FFD3A5'], // Лососевый → Персиковый
+  ['#000000', '#454545'], // Черный → Темно-серый
+  ['#1a237e', '#534bae'], // Темно-синий → Синий
+  ['#1b5e20', '#2e7d32'], // Темно-зеленый → Зеленый
+  ['#311b92', '#512da8'], // Темно-фиолетовый → Фиолетовый
+  ['#263238', '#455a64'], // Темно-серый → Серый
+  ['#0D47A1', '#1976D2'], // Темно-синий → Синий
+  ['#004D40', '#00796B'], // Темно-бирюзовый → Бирюзовый
+  ['#1A237E', '#283593'], // Индиго темный → Индиго
+  ['#880E4F', '#AD1457'], // Темно-розовый → Розовый
+  ['#3E2723', '#5D4037'], // Темно-коричневый → Коричневый
 ];
-export const useQRCode = () => {
-  const generateQRCode = useCallback((data: string) => {
-    const [color1, color2] =
-      gradientColors[Math.floor(Math.random() * gradientColors.length)];
 
+const dotTypes: DotType[] = ['square', 'dots', 'rounded'];
+const cornerDotTypes: CornerDotType[] = [
+  'square',
+  'dot',
+  'classy',
+  'classy-rounded',
+  'dots',
+  'rounded',
+  'extra-rounded',
+];
+const cornerSquareTypes: CornerSquareType[] = ['square', 'extra-rounded'];
+const shapes: ShapeType[] = ['circle'];
+
+export const useQRCode = () => {
+  const getRandomElement = <T,>(array: T[]): T => {
+    return array[Math.floor(Math.random() * array.length)];
+  };
+  const generateQRCode = useCallback((data: string) => {
+    const [color1, color2] = getRandomElement(gradientColors);
+    const rotation = Math.PI / 4;
     return new QRCodeStyling({
       type: 'canvas',
-      shape: 'square',
+      shape: getRandomElement(shapes),
       width: 300,
       height: 300,
       data: data,
@@ -37,12 +59,11 @@ export const useQRCode = () => {
         margin: 5,
       },
       dotsOptions: {
-        type: 'square',
-        roundSize: true,
+        type: getRandomElement(dotTypes),
         color: color1,
         gradient: {
           type: 'linear',
-          rotation: Math.random() * Math.PI,
+          rotation,
           colorStops: [
             { offset: 0, color: color1 },
             { offset: 1, color: color2 },
@@ -54,23 +75,14 @@ export const useQRCode = () => {
         color: '#ffffff',
       },
       cornersSquareOptions: {
-        type: 'dot',
-        color: '#000000',
-        gradient: {
-          type: 'linear',
-          rotation: Math.random() * Math.PI,
-          colorStops: [
-            { offset: 0, color: color2 },
-            { offset: 1, color: color1 },
-          ],
-        },
+        type: getRandomElement(cornerSquareTypes),
+        color: color1,
       },
       cornersDotOptions: {
-        type: 'dot',
+        type: getRandomElement(cornerDotTypes),
         color: color1,
       },
     });
   }, []);
-
   return { generateQRCode };
 };

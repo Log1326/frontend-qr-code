@@ -9,26 +9,40 @@ export async function POST(req: Request) {
     const formData = await req.formData();
     const title = formData.get('title') as string;
 
-    if (!title) throw new Error('Title is required');
+    if (!title) {
+      return NextResponse.json(
+        { error: 'Title is required' },
+        { status: 400 }
+      );
+    }
 
     const parameters = [];
     let i = 0;
 
     while (formData.has(`parameters.${i}.type`)) {
       const name = formData.get(`parameters.${i}.name`) as string;
-      const type = formData.get(`parameters.${i}.type`) as
-        | 'TEXT'
-        | 'AREA'
-        | 'FILE';
+      const type = formData.get(`parameters.${i}.type`) as 'TEXT' | 'AREA' | 'FILE';
       let value = formData.get(`parameters.${i}.value`) as string;
       const order = formData.get(`parameters.${i}.order`);
 
       if (type === 'FILE') {
         const file = formData.get(`parameters.${i}.file`) as File;
-        if (file) value = await fileToBase64(file);
+        if (file) {
+          try {
+            value = await fileToBase64(file);
+          } catch (error) {
+            return NextResponse.json(
+              { error: 'Failed to process file', details: error instanceof Error ? error.message : 'Unknown error' },
+              { status: 400 }
+            );
+          }
+        }
       }
 
-      if (!type || !value || !name || order === null) continue;
+      if (!type || !value || !name || order === null) {
+        i++;
+        continue;
+      }
 
       parameters.push({
         name,
@@ -39,32 +53,53 @@ export async function POST(req: Request) {
       i++;
     }
 
-    const recipe = await prisma.recipe.create({
-      data: {
-        title,
-        parameters: {
-          createMany: {
-            data: parameters,
-          },
-        },
-      },
-      include: {
-        parameters: {
-          orderBy: {
-            order: 'asc',
-          },
-        },
-      },
-    });
+    if (parameters.length === 0) {
+      return NextResponse.json(
+        { error: 'No valid parameters provided' },
+        { status: 400 }
+      );
+    }
 
-    return NextResponse.json({ id: recipe.id });
+    try {
+      const recipe = await prisma.recipe.create({
+        data: {
+          title,
+          parameters: {
+            createMany: {
+              data: parameters,
+            },
+          },
+        },
+        include: {
+          parameters: {
+            orderBy: {
+              order: 'asc',
+            },
+          },
+        },
+      });
+
+      return NextResponse.json({ id: recipe.id });
+    } catch (dbError) {
+      console.error('Database error:', dbError);
+      return NextResponse.json(
+        {
+          error: 'Database error',
+          details: dbError instanceof Error ? dbError.message : 'Unknown database error'
+        },
+        { status: 500 }
+      );
+    }
   } catch (error) {
+    console.error('General error:', error);
     return NextResponse.json(
       {
-        error: 'Failed to create recipe',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
-      { status: 500 },
+      { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

@@ -1,12 +1,13 @@
 'use client';
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '@/components/ui/form';
+import { getOrigin } from '@/lib/getOrigin';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Trash } from 'lucide-react';
 import { useState } from 'react';
@@ -15,11 +16,11 @@ import { z } from 'zod';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from './ui/select';
 import { Textarea } from './ui/textarea';
 
@@ -63,78 +64,47 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
   });
 
   const onSubmit = async (data: RecipeFormData): Promise<void> => {
-      alert('Начало отправки формы');
-      setIsLoading(true);
-      try {
-        alert('Создаем FormData');
-        const formData = new FormData();
-        formData.append('title', data.title);
-        alert(`Добавлен заголовок: ${data.title}`);
-
-        data.parameters.forEach((param, index) => {
-          alert(`Обработка параметра ${index + 1}: ${param.name}`);
-          formData.append(`parameters.${index}.name`, param.name);
-          formData.append(`parameters.${index}.type`, param.type);
-          if (param.type === 'FILE') {
-            alert(`Параметр ${index + 1} - это файл`);
-            const fileInput = document.querySelector(
-              `input[name="parameters.${index}.file"]`,
-            ) as HTMLInputElement;
-            if (fileInput?.files?.[0]) {
-              alert(`Файл найден: ${fileInput.files[0].name}`);
-              formData.append(`parameters.${index}.file`, fileInput.files[0]);
-              formData.append(
-                `parameters.${index}.value`,
-                fileInput.files[0].name,
-              );
-            } else {
-              alert(`Файл не найден для параметра ${index + 1}`);
-            }
-          } else {
-            alert(`Добавляем значение для параметра ${index + 1}: ${param.value}`);
-            formData.append(`parameters.${index}.value`, param.value);
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('title', data.title);
+      data.parameters.forEach((param, index) => {
+        formData.append(`parameters.${index}.name`, param.name);
+        formData.append(`parameters.${index}.type`, param.type);
+        if (param.type === 'FILE') {
+          const fileInput = document.querySelector(
+            `input[name="parameters.${index}.file"]`,
+          ) as HTMLInputElement;
+          if (fileInput?.files?.[0]) {
+            formData.append(`parameters.${index}.file`, fileInput.files[0]);
+            formData.append(
+              `parameters.${index}.value`,
+              fileInput.files[0].name,
+            );
           }
-
-          formData.append(`parameters.${index}.order`, param.order.toString());
-          alert(`Параметр ${index + 1} полностью обработан`);
-        });
-
-        alert('Отправляем запрос на сервер');
-        const response = await fetch('/api/recipes', {
-          method: 'POST',
-          body: formData,
-        });
-        alert(`Получен ответ от сервера. Статус: ${response.status}`);
-
-        if (!response.ok) {
-          alert('Ответ сервера не OK');
-          const errorData = await response.json();
-          throw new Error(errorData.details || 'Failed to create recipe');
-        }
-
-        alert('Парсим ответ сервера');
-        const result = await response.json();
-
-        if (result.id) {
-          alert(`Получен ID: ${result.id}`);
-          const qrUrl = `${window.location.origin}/recipes/${result.id}`;
-          alert(`Генерируем QR-код для URL: ${qrUrl}`);
-          onQRCodeGenerated(qrUrl);
-        } else {
-          alert('ID не найден в ответе');
-          throw new Error('No URL in response');
-        }
-      } catch (error) {
-        alert('Произошла ошибка!');
-        alert(
-          'Error submitting form: ' +
-            (error instanceof Error ? error.message : 'Unknown error'),
-        );
-      } finally {
-        alert('Завершение процесса');
-        setIsLoading(false);
+        } else formData.append(`parameters.${index}.value`, param.value);
+        formData.append(`parameters.${index}.order`, param.order.toString());
+      });
+      const response = await fetch('/api/recipes', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.details || 'Failed to create recipe');
       }
-    };
+      const result = await response.json();
+      if (result.id) onQRCodeGenerated(`${getOrigin()}/recipes/${result.id}`);
+      else throw new Error('No URL in response');
+    } catch (error) {
+      alert(
+        'Error submitting form: ' +
+          (error instanceof Error ? error.message : 'Unknown error'),
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleFileChange =
     (index: number) =>

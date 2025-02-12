@@ -10,10 +10,7 @@ export async function POST(req: Request) {
     const title = formData.get('title') as string;
 
     if (!title) {
-      return NextResponse.json(
-        { error: 'Title is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Title is required' }, { status: 400 });
     }
 
     const parameters = [];
@@ -21,7 +18,10 @@ export async function POST(req: Request) {
 
     while (formData.has(`parameters.${i}.type`)) {
       const name = formData.get(`parameters.${i}.name`) as string;
-      const type = formData.get(`parameters.${i}.type`) as 'TEXT' | 'AREA' | 'FILE';
+      const type = formData.get(`parameters.${i}.type`) as
+        | 'TEXT'
+        | 'AREA'
+        | 'FILE';
       let value = formData.get(`parameters.${i}.value`) as string;
       const order = formData.get(`parameters.${i}.order`);
 
@@ -32,8 +32,12 @@ export async function POST(req: Request) {
             value = await fileToBase64(file);
           } catch (error) {
             return NextResponse.json(
-              { error: 'Failed to process file', details: error instanceof Error ? error.message : 'Unknown error' },
-              { status: 400 }
+              {
+                error: 'Failed to process file',
+                details:
+                  error instanceof Error ? error.message : 'Unknown error',
+              },
+              { status: 400 },
             );
           }
         }
@@ -56,7 +60,7 @@ export async function POST(req: Request) {
     if (parameters.length === 0) {
       return NextResponse.json(
         { error: 'No valid parameters provided' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -85,9 +89,12 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           error: 'Database error',
-          details: dbError instanceof Error ? dbError.message : 'Unknown database error'
+          details:
+            dbError instanceof Error
+              ? dbError.message
+              : 'Unknown database error',
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
   } catch (error) {
@@ -95,9 +102,9 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
     await prisma.$disconnect();

@@ -4,6 +4,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { downloadAsDoc } from '@/lib/documentGenerator';
+import { getOrigin } from '@/lib/getOrigin';
 import { Prisma } from '@prisma/client';
 import { QrCode } from 'lucide-react';
 import Image from 'next/image';
@@ -64,7 +65,7 @@ export const Table: React.FC<{ recipe: RecipeWithParameters }> = ({
             <DialogContent className="h-full w-full">
               <AspectRatio ratio={16 / 9} className="bg-muted">
                 <QRGenerator
-                  data={`${window.location.origin}/recipes/${recipe.id}`}
+                  data={`${getOrigin()}/recipes/${recipe.id}`}
                 />
               </AspectRatio>
             </DialogContent>

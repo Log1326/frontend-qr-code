@@ -203,6 +203,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
                 {...form.register(`parameters.${index}.order`)}
                 value={index}
               />
+              {!isMobile && (
               <div className="flex items-center gap-1">
                 <FormField
                   control={form.control}
@@ -239,6 +240,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
                   <Trash />
                 </Button>
               </div>
+              )}
             </div>
           ))}
         </div>

@@ -1,31 +1,64 @@
+// Подключение к базе данных PostgreSQL
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// Генератор Prisma-клиента
 generator client {
   provider = "prisma-client-js"
 }
 
+// Основная модель: заказ, оформляемый через QR-форму
 model Recipe {
-  id          String     @id @default(uuid())
-  title       String
-  parameters  Parameter[]
-  createdAt   DateTime   @default(now())
+  id          String         @id @default(uuid())         // Уникальный ID заказа
+  employee   String @default("АНТОША")                                      // Имя сотрудника, оформившего заказ
+  clientName String @default("Неизвестный клиент")                                     // Имя клиента
+  price       Float?                                      // Цена заказа (опционально)
+  status      RecipeStatus   @default(NEW)                // Текущий статус заказа
+  parameters  Parameter[]                                // Поля формы (описание, фото и т.д.)
+  events      RecipeEvent[]                              // История действий над заказом
+  createdAt   DateTime       @default(now())              // Время создания заказа
 }
 
+// Поля формы заказа (текст, фото и т.д.)
 model Parameter {
-  id        String     @id @default(uuid())
-  name      String
-  type      FieldType
-  value     String
+  id        String     @id @default(uuid())               // Уникальный ID параметра
+  name      String                                        // Название поля (например, "Описание")
+  type      FieldType                                     // Тип поля: текст, фото и т.п.
+  description String @default("Описание по умолчанию")                                     // Значение (текст или URL)
+  order     Int                                           // Порядок отображения
   recipe    Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-  recipeId  String
-  order     Int
+  recipeId  String                                        // ID связанного заказа
 }
 
+// События над заказом: просмотр, изменение, смена статуса
+model RecipeEvent {
+  id        String       @id @default(uuid())             // Уникальный ID события
+  type      EventType                                    // Тип события
+  recipe    Recipe       @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId  String                                        // ID связанного заказа
+  createdAt DateTime     @default(now())                  // Время события
+}
+
+// Типы данных, которые могут быть в параметрах формы
 enum FieldType {
-  TEXT
-  AREA
-  FILE
+  TEXT       // Однострочное текстовое поле
+  AREA       // Многострочное текстовое поле
+  FILE       // Файл (изображение и т.д.)
+}
+
+// Возможные статусы заказа
+enum RecipeStatus {
+  NEW           // Новый
+  IN_PROGRESS   // В процессе выполнения
+  COMPLETED     // Завершён
+}
+
+// События, фиксируемые в системе
+enum EventType {
+  CREATED         // Заказ создан
+  VIEWED          // Заказ просмотрен в админке
+  STATUS_CHANGE   // Статус изменён
+  UPDATED         // Заказ отредактирован
 }

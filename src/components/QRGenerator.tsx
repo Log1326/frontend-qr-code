@@ -69,7 +69,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
           Download
         </Button>
         <Button variant="link" onClick={() => push(String(data))}>
-          Check
+          Link
         </Button>
         <div className="absolute right-3 top-3">
           <ShareButton qrCode={qrCode} url={data} />

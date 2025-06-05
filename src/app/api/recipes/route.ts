@@ -1,16 +1,23 @@
 import { fileToBase64 } from '@/lib/fileToBase64';
-import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
+import { db } from '@/lib/prisma';
+import { NextRequest, NextResponse } from 'next/server';
+import { RecipeStatus, FieldType } from '@prisma/client';
 
-const prisma = new PrismaClient();
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const title = formData.get('title') as string;
 
-    if (!title) {
-      return NextResponse.json({ error: 'Title is required' }, { status: 400 });
+    const employee = formData.get('employee') as string;
+    const clientName = formData.get('clientName') as string;
+    const status = formData.get('status') as RecipeStatus;
+    const priceRaw = formData.get('price') as string | null;
+    const price = priceRaw ? parseFloat(priceRaw) : undefined;
+
+    if (!employee || !clientName || !status) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 },
+      );
     }
 
     const parameters = [];
@@ -18,18 +25,20 @@ export async function POST(req: Request) {
 
     while (formData.has(`parameters.${i}.type`)) {
       const name = formData.get(`parameters.${i}.name`) as string;
-      const type = formData.get(`parameters.${i}.type`) as
-        | 'TEXT'
-        | 'AREA'
-        | 'FILE';
-      let value = formData.get(`parameters.${i}.value`) as string;
+      const type = formData.get(`parameters.${i}.type`) as FieldType;
+      let description = formData.get(`parameters.${i}.description`) as string;
       const order = formData.get(`parameters.${i}.order`);
+
+      if (!name || !type || !order) {
+        i++;
+        continue;
+      }
 
       if (type === 'FILE') {
         const file = formData.get(`parameters.${i}.file`) as File;
         if (file) {
           try {
-            value = await fileToBase64(file);
+            description = await fileToBase64(file);
           } catch (error) {
             return NextResponse.json(
               {
@@ -43,17 +52,13 @@ export async function POST(req: Request) {
         }
       }
 
-      if (!type || !value || !name || order === null) {
-        i++;
-        continue;
-      }
-
       parameters.push({
         name,
         type,
-        value,
+        description,
         order: parseInt(order as string),
       });
+
       i++;
     }
 
@@ -64,39 +69,28 @@ export async function POST(req: Request) {
       );
     }
 
-    try {
-      const recipe = await prisma.recipe.create({
-        data: {
-          title,
-          parameters: {
-            createMany: {
-              data: parameters,
-            },
+    const recipe = await db.recipe.create({
+      data: {
+        employee,
+        clientName,
+        status,
+        price,
+        parameters: {
+          createMany: {
+            data: parameters,
           },
         },
-        include: {
-          parameters: {
-            orderBy: {
-              order: 'asc',
-            },
+      },
+      include: {
+        parameters: {
+          orderBy: {
+            order: 'asc',
           },
         },
-      });
+      },
+    });
 
-      return NextResponse.json({ id: recipe.id });
-    } catch (dbError) {
-      console.error('Database error:', dbError);
-      return NextResponse.json(
-        {
-          error: 'Database error',
-          details:
-            dbError instanceof Error
-              ? dbError.message
-              : 'Unknown database error',
-        },
-        { status: 500 },
-      );
-    }
+    return NextResponse.json({ id: recipe.id });
   } catch (error) {
     console.error('General error:', error);
     return NextResponse.json(
@@ -107,6 +101,6 @@ export async function POST(req: Request) {
       { status: 500 },
     );
   } finally {
-    await prisma.$disconnect();
+    await db.$disconnect();
   }
 }

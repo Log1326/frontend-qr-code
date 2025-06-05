@@ -1,17 +1,30 @@
-import { PrismaClient } from '@prisma/client';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Table } from './components/Table';
+import { db } from '@/lib/prisma';
 
-const prisma = new PrismaClient();
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+const getRecipeById = async (id: string) => {
+  try {
+    return db.recipe.findUnique({
+      where: { id },
+      include: {
+        parameters: {
+          orderBy: { order: 'asc' },
+        },
+      },
+    });
+  } catch (error) {
+    console.log('getRecipeById:' + error);
+  }
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const id = (await params).id;
-  const recipe = await prisma.recipe.findUnique({
-    where: { id },
-  });
+  const recipe = await getRecipeById(id);
 
   if (!recipe) {
     return {
@@ -19,23 +32,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: 'The requested recipe could not be found.',
     };
   }
-
   return {
-    title: recipe.title,
-    description: `Recipe details for ${recipe.title}`,
+    title: `Recipe for ${recipe.employee}`,
+    description: `Created by ${recipe.clientName}`,
   };
 }
 
 export default async function RecipePage({ params }: Props) {
   const id = (await params).id;
-  const recipe = await prisma.recipe.findUnique({
-    where: { id },
-    include: {
-      parameters: {
-        orderBy: { order: 'asc' },
-      },
-    },
-  });
+  const recipe = await getRecipeById(id);
   if (!recipe) notFound();
   return <Table recipe={recipe} />;
 }

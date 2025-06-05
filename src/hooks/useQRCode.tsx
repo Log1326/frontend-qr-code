@@ -20,7 +20,7 @@ const gradientColors: string[][] = [
   ['#3E2723', '#5D4037'], // Темно-коричневый → Коричневый
 ];
 
-const dotTypes: DotType[] = ['square', 'dots', 'rounded'];
+const dotTypes: DotType[] = ['dots', 'square', 'rounded'];
 const cornerDotTypes: CornerDotType[] = [
   'square',
   'dot',
@@ -31,7 +31,7 @@ const cornerDotTypes: CornerDotType[] = [
   'extra-rounded',
 ];
 const cornerSquareTypes: CornerSquareType[] = ['square', 'extra-rounded'];
-const shapes: ShapeType[] = ['circle'];
+const shapes: ShapeType[] = ['square'];
 
 export const useQRCode = () => {
   const getRandomElement = <T,>(array: T[]): T => {

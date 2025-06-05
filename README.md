@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📦 QR Code Recipes — Next.js Fullstack App
 
-## Getting Started
+Это fullstack-приложение, созданное на базе Next.js с использованием create-next-app. Оно позволяет создавать рецепты (или инструкции) с параметрами различных типов и мгновенно генерировать уникальные QR-коды для доступа к ним.
 
-First, run the development server:
+⸻
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🚀 Функциональность
+	•	📄 Создание рецептов с параметрами: текст, область ввода или файл.
+	•	📁 Загрузка и обработка файлов с преобразованием в Base64 для хранения.
+	•	🔐 Интеграция с PostgreSQL через Prisma — надёжное хранение данных.
+	•	🧾 Генерация QR-кодов с помощью qr-code-styling — поддержка логотипов, цветных точек и фона.
+	•	🌐 Поддержка маршрутов через App Router и UI на базе React Server Components.
+	•	📊 Удобная таблица параметров — структурированный вывод всех деталей рецепта.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+⸻
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+🛠️ Технологии
+	•	Next.js (App Router) — современная архитектура с серверными компонентами
+	•	TypeScript — типизация всего проекта
+	•	Prisma + PostgreSQL (Neon) — типобезопасный доступ к БД
+	•	React Hook Form — валидация и работа с формами
+	•	qr-code-styling — кастомизация QR-кодов
+	•	Tailwind CSS — современная стилизация компонентов
+	•	Zod — схема валидации
+	•	Shadcn ui — headless библиотека готовых компонентов
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+▶️ Как запустить
+# Запустить приложение в режиме разработки
+pnpm run dev
 
-## Learn More
+# Линтинг проекта (ESLint + TypeScript)
+pnpm run lint
 
-To learn more about Next.js, take a look at the following resources:
+# Сборка production-версии
+pnpm run build
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Запуск production-сервера (после сборки)
+pnpm start
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+💡 Полезные команды разработки
+# Установка зависимостей
+pnpm install
 
-## Deploy on Vercel
+# Очистить .next, node_modules, и переустановить зависимости
+rm -rf node_modules .next && pnpm install
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Обновить Prisma схему и сгенерировать клиент
+pnpm prisma generate
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Выполнить миграции в базу данных
+pnpm prisma migrate dev
+
+# Подключиться к базе через Prisma Studio (UI)
+pnpm prisma studio
+
+💾 Развёртывание
+
+Vercel, платформу от создателей Next.js. Хранилище можно подключить к Neon.tech или любому PostgreSQL-хостингу.
+
+Документация по деплою: Deploying Next.js
+
+⸻
+
+📚 Дополнительно
+	•	Документация Next.js
+	•	Примеры с React Hook Form
+	•	Prisma + Next.js Guide

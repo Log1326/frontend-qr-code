@@ -27,6 +27,20 @@
 - [shadcn/ui](https://ui.shadcn.com/) — headless UI-компоненты
 
 ---
+## 💾 Развёртывание
+
+Приложение можно развернуть на [Vercel](https://vercel.com) — платформе от создателей Next.js.
+Хранилище данных подключается через [Neon.tech](https://neon.tech) или любой другой PostgreSQL-хостинг.
+
+📄 Документация: [Deploying Next.js](https://nextjs.org/docs/app/building-your-application/deploying)
+
+---
+
+## 📚 Дополнительно
+
+- [📘 Документация Next.js](https://nextjs.org/docs)
+- [📘 Примеры с React Hook Form](https://react-hook-form.com/get-started)
+- [📘 Prisma + Next.js Guide](https://www.prisma.io/docs/guides/nextjs)
 
 ## ▶️ Как запустить
 
@@ -34,39 +48,38 @@
 ```bash
 pnpm run dev
 # Линтинг проекта (ESLint + TypeScript)
+```bash
 pnpm run lint
+```
 
 # Сборка production-версии
+```bash
 pnpm run build
+```
 
 # Запуск production-сервера
+```bash
 pnpm start
+```
 
 💡 Полезные команды разработки
 # Установка зависимостей
+```bash
 pnpm install
-
+```
 # Очистить .next, node_modules, и переустановить зависимости
+```bash
 rm -rf node_modules .next && pnpm install
-
+```
 # Обновить Prisma схему и сгенерировать клиент
+```bash
 pnpm prisma generate
-
+```
 # Выполнить миграции в базу данных
+```bash
 pnpm prisma migrate dev
-
+```
 # Подключиться к базе через Prisma Studio (UI)
+```bash
 pnpm prisma studio
-
-💾 Развёртывание
-
-Vercel, платформу от создателей Next.js. Хранилище можно подключить к Neon.tech или любому PostgreSQL-хостингу.
-
-Документация по деплою: Deploying Next.js
-
-⸻
-
-📚 Дополнительно
-	•	Документация Next.js
-	•	Примеры с React Hook Form
-	•	Prisma + Next.js Guide
+```

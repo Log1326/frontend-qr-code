@@ -52,7 +52,7 @@ export const Table: React.FC<{ recipe: RecipeWithParameters }> = ({
   return (
     <div className="w-full rounded-md p-6 shadow-lg ring-1 ring-gray-300">
       <div className="flex items-center justify-between">
-        <h1 className="w-2/3 p-2 text-3xl font-bold">{recipe.title}</h1>
+        <h1 className="w-2/3 p-2 text-3xl font-bold">{recipe.employee}</h1>
         <div className="flex flex-col items-center gap-2">
           <Button onClick={() => downloadAsDoc(recipe)}>Download as DOC</Button>
           <Dialog>
@@ -78,7 +78,7 @@ export const Table: React.FC<{ recipe: RecipeWithParameters }> = ({
               {param.name}
             </div>
             <div className="w-2/3 p-2">
-              {renderers[param.type]?.(param.value)}
+              {renderers[param.type]?.(param.description)}
             </div>
           </div>
         ))}

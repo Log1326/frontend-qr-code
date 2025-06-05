@@ -94,3 +94,31 @@ pnpm prisma migrate dev
 ```bash
 pnpm prisma studio
 ```
+
+
+## Пример работы с базой данных (Prisma)
+
+```bash
+import { db } from '@/lib/prisma';
+
+/**
+ * Получить рецепт по ID с параметрами,
+ * отсортированными по полю `order` в порядке возрастания
+ */
+const getRecipeById = async (id: string) => {
+  try {
+    const recipe = await db.recipe.findUnique({
+      where: { id },
+      include: {
+        parameters: {
+          orderBy: { order: 'asc' },
+        },
+      },
+    });
+    return recipe;
+  } catch (error) {
+    console.error('Ошибка при получении рецепта:', error);
+    return null;
+  }
+};
+````

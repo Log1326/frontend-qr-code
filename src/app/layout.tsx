@@ -3,11 +3,10 @@ import '@/app/globals.css';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
-import { ModeToggle } from '@/components/mode-toggle';
-import { ThemeProvider } from '@/providers/ThemeProvider';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { SiteHeader } from '@/components/site-header';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

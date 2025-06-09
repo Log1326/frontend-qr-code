@@ -1,7 +1,8 @@
 'use client';
+import { useState } from 'react';
+
 import { RecipeForm } from '@/components/form/recipe-form';
 import { QRGenerator } from '@/components/qr-generator';
-import { useState } from 'react';
 
 export default function Page() {
   const [qrData, setQrData] = useState<string | null>(null);

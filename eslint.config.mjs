@@ -57,29 +57,21 @@ const eslintConfig = [
       },
     },
     rules: {
+      // Пути импорта
       'no-relative-import-paths/no-relative-import-paths': [
         'error',
         { allowSameFolder: false, rootDir: 'src', prefix: '@' },
       ],
+
+      // React
       'react-hooks/exhaustive-deps': 'warn',
-      'consistent-return': 'off',
-      'import/extensions': 'off',
-      'import/prefer-default-export': 'off',
-      'import/no-cycle': ['error', { maxDepth: 1 }],
-      'import/order': 'off',
-      'prettier/prettier': ['error', { singleQuote: true, endOfLine: 'auto' }],
       'react/function-component-definition': 'off',
       'react/destructuring-assignment': 'off',
       'react/require-default-props': 'off',
       'react/jsx-props-no-spreading': 'off',
-      '@typescript-eslint/comma-dangle': 'off',
-      '@typescript-eslint/consistent-type-imports': 'error',
-      'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
-      'unused-imports/no-unused-imports': 'error',
-      'unused-imports/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      'simple-import-sort/imports': 'error',
-      'simple-import-sort/exports': 'error',
+
+      // Прочее
+      'consistent-return': 'off',
       'no-param-reassign': 'off',
       'operator-linebreak': 'off',
       'no-restricted-syntax': [
@@ -88,6 +80,32 @@ const eslintConfig = [
         'LabeledStatement',
         'WithStatement',
       ],
+
+      // Импорты
+      'import/extensions': 'off',
+      'import/prefer-default-export': 'off',
+      'import/no-cycle': ['error', { maxDepth: 1 }],
+      'import/order': 'off',
+
+      // Prettier
+      'prettier/prettier': ['error', { singleQuote: true, endOfLine: 'auto' }],
+
+      // Unused (удаление неиспользуемого)
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+
+      // TypeScript
+      '@typescript-eslint/comma-dangle': 'off',
+      '@typescript-eslint/consistent-type-imports': 'error',
+
+      // Сортировка
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
     },
   },
 ];

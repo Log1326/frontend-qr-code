@@ -7,16 +7,12 @@ import {
 import type { RecipeStatus } from '@prisma/client';
 
 import { SortableCard } from '@/app/employee/components/SortableCard';
-
-export const Block = ({
-  id,
-  title,
-  tasks,
-}: {
-  id: RecipeStatus;
+interface BlockProps {
+  id?: RecipeStatus;
   title: string;
   tasks: any[];
-}) => {
+}
+export const Block: React.FC<BlockProps> = ({ title, tasks }) => {
   return (
     <div className="min-h-[200px] rounded-xl bg-muted p-2">
       <h2 className="mb-2 px-2 text-lg font-semibold">{title}</h2>

@@ -7,6 +7,7 @@ import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { ParameterField } from '@/components/form/parameter-field';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -26,7 +27,6 @@ import {
 } from '@/components/ui/select';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { getOrigin } from '@/lib/getOrigin';
-import { ParameterField } from './parameter-field';
 
 const fieldTypes = Object.values(FieldType) as [FieldType, ...FieldType[]];
 const recipeStatuses = Object.values(RecipeStatus) as [

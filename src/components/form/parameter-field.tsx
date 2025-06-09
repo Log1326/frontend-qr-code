@@ -37,7 +37,6 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
 }) => {
   const { control, register, setValue } = useFormContext();
   const type = useWatch({ control, name: `parameters.${index}.type` });
-
   return (
     <div className="flex flex-col items-start gap-2 md:flex-row">
       <FormField

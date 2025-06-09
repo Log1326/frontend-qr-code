@@ -1,5 +1,7 @@
-import { put, PutBlobResult } from '@vercel/blob';
-import { NextRequest, NextResponse } from 'next/server';
+import type { PutBlobResult } from '@vercel/blob';
+import { put } from '@vercel/blob';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export async function POST(
   req: NextRequest,

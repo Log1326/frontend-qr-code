@@ -3,12 +3,12 @@ import type { Prisma } from '@prisma/client';
 import { QrCode } from 'lucide-react';
 import Image from 'next/image';
 
+import { QRGenerator } from '@/components/qr-generator';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { downloadAsDoc } from '@/lib/documentGenerator';
 import { getOrigin } from '@/lib/getOrigin';
-import { QRGenerator } from '@/components/qr-generator';
 
 const renderers = {
   TEXT: (value: string) => <span>{value}</span>,

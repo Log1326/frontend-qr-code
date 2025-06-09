@@ -1,23 +1,24 @@
 'use client';
 
 import { Trash } from 'lucide-react';
-import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
-import { Button } from '../ui/button';
+import { useFormContext, useWatch } from 'react-hook-form';
+
+import { Button } from '@/components/ui/button';
 import {
   FormControl,
   FormField,
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
-import { useFormContext, useWatch } from 'react-hook-form';
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 
 interface ParameterFieldProps {
   index: number;

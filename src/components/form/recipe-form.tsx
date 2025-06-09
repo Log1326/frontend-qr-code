@@ -1,36 +1,32 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FieldType, RecipeStatus } from '@prisma/client';
+import { Loader2 } from 'lucide-react';
+import type { SubmitHandler } from 'react-hook-form';
+import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+import { Button } from '@/components/ui/button';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from '@/components/ui/form';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { getOrigin } from '@/lib/getOrigin';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
-import {
-  useForm,
-  useFieldArray,
-  FormProvider,
-  SubmitHandler,
-} from 'react-hook-form';
-import { z } from 'zod';
-
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { ParameterField } from './ParameterField';
-import { FieldType, RecipeStatus } from '@prisma/client';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '@/components/ui/select';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { getOrigin } from '@/lib/getOrigin';
+import { ParameterField } from './parameter-field';
 
 const fieldTypes = Object.values(FieldType) as [FieldType, ...FieldType[]];
 const recipeStatuses = Object.values(RecipeStatus) as [
@@ -195,7 +191,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
                 <FormControl>
                   <Input
                     type="number"
-                    step="0.01"
+                    step="100"
                     placeholder="Price"
                     {...field}
                   />
@@ -245,7 +241,6 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
           {!isMobile && (
             <Button
               type="button"
-              variant="primary"
               className="w-full"
               onClick={() =>
                 append({

@@ -1,25 +1,29 @@
+import type { FieldType, RecipeStatus } from '@prisma/client';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { fileToBase64 } from '@/lib/fileToBase64';
 import { db } from '@/lib/prisma';
-import { NextRequest, NextResponse } from 'next/server';
-import { RecipeStatus, FieldType } from '@prisma/client';
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
 
-    const employee = formData.get('employee') as string;
+    const employeeName = formData.get('employee') as string;
     const clientName = formData.get('clientName') as string;
     const status = formData.get('status') as RecipeStatus;
     const priceRaw = formData.get('price') as string | null;
     const price = priceRaw ? parseFloat(priceRaw) : undefined;
 
-    if (!employee || !clientName || !status) {
+    if (!employeeName || !clientName || !status) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 },
       );
     }
-
+    const employee = await db.employee.findFirst({
+      where: { name: employeeName },
+    });
     const parameters = [];
     let i = 0;
 
@@ -71,7 +75,11 @@ export async function POST(req: NextRequest) {
 
     const recipe = await db.recipe.create({
       data: {
-        employee,
+        employee: {
+          connect: {
+            id: employee?.id,
+          },
+        },
         clientName,
         status,
         price,

@@ -1,7 +1,8 @@
+import { closestCenter, DndContext } from '@dnd-kit/core';
 import { RecipeStatus } from '@prisma/client';
 import { useState } from 'react';
-import { DndContext, closestCenter } from '@dnd-kit/core';
-import { Block } from './Block';
+
+import { Block } from '@/app/employee/components/Block';
 const initialData = {
   [RecipeStatus.NEW]: [
     { id: '1', title: 'Заказ 1' },

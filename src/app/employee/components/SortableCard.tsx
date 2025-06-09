@@ -1,6 +1,7 @@
-import { Card, CardContent } from '@/components/ui/card';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+
+import { Card, CardContent } from '@/components/ui/card';
 
 export const SortableCard = ({ id, title }: { id: string; title: string }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =

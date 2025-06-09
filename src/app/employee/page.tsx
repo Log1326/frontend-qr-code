@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
 import { useSearchParams } from 'next/navigation';
-import { HeaderEmployees } from './components/HeaderEmployees';
-import { Blocks } from './components/Blocks';
+import { useEffect, useState } from 'react';
+import type { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+
+import { Blocks } from '@/app/employee/components/Blocks';
+import { HeaderEmployees } from '@/app/employee/components/HeaderEmployees';
 
 interface ChatMessage {
   employeeId: string;

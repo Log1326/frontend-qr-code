@@ -1,9 +1,10 @@
-import QRCodeStyling, {
+import type {
   CornerDotType,
   CornerSquareType,
   DotType,
   ShapeType,
 } from 'qr-code-styling';
+import QRCodeStyling from 'qr-code-styling';
 import { useCallback } from 'react';
 
 // Обновленные цветовые комбинации с высоким контрастом

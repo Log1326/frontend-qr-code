@@ -1,10 +1,7 @@
-import { AppSidebar } from '@/components/AppSidebar';
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
 import { cookies } from 'next/headers';
+
+import { AppSidebar } from '@/components/AppSidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 export default async function Layout({
   children,

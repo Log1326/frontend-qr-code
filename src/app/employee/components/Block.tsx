@@ -4,9 +4,9 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { Card, CardContent } from '@/components/ui/card';
-import { RecipeStatus } from '@prisma/client';
-import { SortableCard } from './SortableCard';
+import type { RecipeStatus } from '@prisma/client';
+
+import { SortableCard } from '@/app/employee/components/SortableCard';
 
 export const Block = ({
   id,

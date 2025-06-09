@@ -1,7 +1,8 @@
-import { useIsMobile } from '@/hooks/useIsMobile';
 import { Share } from 'lucide-react';
-import QRCodeStyling from 'qr-code-styling';
-import { Button } from './ui/button';
+import type QRCodeStyling from 'qr-code-styling';
+
+import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface ShareButtonProps {
   qrCode: QRCodeStyling | null;

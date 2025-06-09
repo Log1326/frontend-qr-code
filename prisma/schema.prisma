@@ -18,7 +18,8 @@ model Recipe {
   price       Float?                                      // Цена заказа (опционально)
   status      RecipeStatus   @default(NEW)               // Текущий статус заказа
   parameters  Parameter[]                                // Поля формы (описание, фото и т.д.)
-  events      RecipeEvent[]                             // История действий над заказом
+  events      RecipeEvent[]                              // История действий над заказом
+  qrCodeUrl   String?                                      // URL на сохранённый QR-код (если есть)
   createdAt   DateTime       @default(now())             // Время создания заказа
 }
 

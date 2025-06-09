@@ -1,8 +1,10 @@
-import { ModeToggle } from '@/components/ModeToggle';
-import { ThemeProvider } from '@/components/ThemeProvider';
+import '@/app/globals.css';
+
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
+
+import { ModeToggle } from '@/components/mode-toggle';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

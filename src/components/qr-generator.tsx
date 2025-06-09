@@ -1,17 +1,18 @@
 'use client';
-import { useQRCode } from '@/hooks/useQRCode';
 import { useRouter } from 'next/navigation';
-import QRCodeStyling from 'qr-code-styling';
+import type QRCodeStyling from 'qr-code-styling';
 import { useEffect, useRef, useState } from 'react';
-import { ShareButton } from './ShareButton';
-import { Button } from './ui/button';
+
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from './ui/select';
+} from '@/components/ui/select';
+import { useQRCode } from '@/hooks/useQRCode';
+import { ShareButton } from './share-button';
 
 type FileExtension = 'svg' | 'png' | 'jpeg' | 'webp';
 

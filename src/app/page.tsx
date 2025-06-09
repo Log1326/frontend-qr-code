@@ -1,6 +1,6 @@
 'use client';
-import { QRGenerator } from '@/components/QRGenerator';
-import { RecipeForm } from '@/components/Form/RecipeForm';
+import { RecipeForm } from '@/components/form/recipe-form';
+import { QRGenerator } from '@/components/qr-generator';
 import { useState } from 'react';
 
 export default function Page() {

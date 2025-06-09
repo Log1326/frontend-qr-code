@@ -1,13 +1,14 @@
 'use client';
-import { QRGenerator } from '@/components/QRGenerator';
+import type { Prisma } from '@prisma/client';
+import { QrCode } from 'lucide-react';
+import Image from 'next/image';
+
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { downloadAsDoc } from '@/lib/documentGenerator';
 import { getOrigin } from '@/lib/getOrigin';
-import { Prisma } from '@prisma/client';
-import { QrCode } from 'lucide-react';
-import Image from 'next/image';
+import { QRGenerator } from '@/components/qr-generator';
 
 const renderers = {
   TEXT: (value: string) => <span>{value}</span>,
@@ -52,12 +53,12 @@ export const Table: React.FC<{ recipe: RecipeWithParameters }> = ({
   return (
     <div className="w-full rounded-md p-6 shadow-lg ring-1 ring-gray-300">
       <div className="flex items-center justify-between">
-        <h1 className="w-2/3 p-2 text-3xl font-bold">{recipe.employee}</h1>
+        <h1 className="w-2/3 p-2 text-3xl font-bold">{recipe.clientName}</h1>
         <div className="flex flex-col items-center gap-2">
           <Button onClick={() => downloadAsDoc(recipe)}>Download as DOC</Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="primary">
+              <Button>
                 Open QR-Code
                 <QrCode />
               </Button>

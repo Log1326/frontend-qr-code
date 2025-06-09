@@ -1,18 +1,17 @@
 'use client';
-import { useRouter } from 'next/navigation';
-import type QRCodeStyling from 'qr-code-styling';
-import { useEffect, useRef, useState } from 'react';
+
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import {
   Select,
-  SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectItem,
+  SelectContent,
 } from '@/components/ui/select';
 import { useQRCode } from '@/hooks/useQRCode';
-import { ShareButton } from './share-button';
 
 type FileExtension = 'svg' | 'png' | 'jpeg' | 'webp';
 
@@ -21,42 +20,68 @@ interface QRGeneratorProps {
 }
 
 export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [fileExt, setFileExt] = useState<FileExtension>('svg');
-  const [qrCode, setQrCode] = useState<QRCodeStyling | null>(null);
-  const { push } = useRouter();
+  const [fileExt, setFileExt] = useState<FileExtension>('png');
+  const [qrUrl, setQrUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const { generateQRCode } = useQRCode();
 
   useEffect(() => {
-    if (data) {
-      const newQRCode = generateQRCode(data);
-      setQrCode(newQRCode);
-    }
-  }, [data, generateQRCode]);
+    const uploadQRCode = async () => {
+      if (!data) {
+        setQrUrl(null);
+        return;
+      }
 
-  useEffect(() => {
-    if (ref.current && qrCode) {
-      ref.current.innerHTML = '';
-      qrCode.append(ref.current);
-    }
-  }, [qrCode]);
+      setLoading(true);
 
-  const handleDownload = () =>
-    qrCode && qrCode.download({ extension: fileExt });
+      try {
+        const qrCode = generateQRCode(data);
+        const rawData = await qrCode.getRawData(fileExt);
+
+        if (!rawData) {
+          throw new Error('QR code generation failed: no data returned');
+        }
+
+        const file = new File([rawData], `qrcode.${fileExt}`, {
+          type: `image/${fileExt}`,
+        });
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await res.json();
+        if (result?.url) {
+          setQrUrl(result.url);
+        } else {
+          setQrUrl(null);
+        }
+      } catch (error) {
+        console.error('Upload failed:', error);
+        setQrUrl(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    uploadQRCode();
+  }, [data, fileExt, generateQRCode]);
 
   if (!data) return null;
 
   return (
-    <div className="relative flex flex-col items-center gap-4 rounded-lg p-4 shadow-md ring-1 ring-gray-300">
+    <div className="flex flex-col items-center gap-4 rounded-lg p-4 shadow-md ring-1 ring-gray-300">
       <h2 className="text-lg font-semibold">QR Code Generator</h2>
-      <div className="rounded-xl border p-2">
-        <div ref={ref} />
-      </div>
-      <div className="flex w-full items-center justify-around gap-2">
+
+      <div className="flex items-center gap-2">
         <Select
           value={fileExt}
           onValueChange={(value: FileExtension) => setFileExt(value)}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Select Format" />
           </SelectTrigger>
           <SelectContent>
@@ -66,16 +91,30 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
             <SelectItem value="webp">WEBP</SelectItem>
           </SelectContent>
         </Select>
-        <Button variant="default" onClick={handleDownload}>
-          Download
+
+        <Button
+          variant="outline"
+          onClick={() => {
+            if (qrUrl) window.open(qrUrl, '_blank');
+          }}
+          disabled={!qrUrl}>
+          Open in New Tab
         </Button>
-        <Button variant="link" onClick={() => push(String(data))}>
-          Link
-        </Button>
-        <div className="absolute right-3 top-3">
-          <ShareButton qrCode={qrCode} url={data} />
-        </div>
       </div>
+
+      {loading ? (
+        <p>Uploading QR code...</p>
+      ) : qrUrl ? (
+        <Image
+          src={qrUrl}
+          alt="QR Code"
+          width={200}
+          height={200}
+          className="rounded border"
+        />
+      ) : (
+        <p>No QR code generated yet.</p>
+      )}
     </div>
   );
 };

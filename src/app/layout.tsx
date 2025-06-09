@@ -5,6 +5,9 @@ import { Geist, Geist_Mono } from 'next/font/google';
 
 import { ModeToggle } from '@/components/mode-toggle';
 import { ThemeProvider } from '@/providers/ThemeProvider';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/app-sidebar';
+import { SiteHeader } from '@/components/site-header';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -92,12 +95,13 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-          <div className="flex min-h-screen flex-col items-center gap-6 bg-background p-3 text-foreground lg:p-20">
-            <div className="absolute right-4 top-4 z-50">
-              <ModeToggle />
-            </div>
-            {children}
-          </div>
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <SiteHeader />
+              <div className="flex justify-center">{children}</div>
+            </SidebarInset>
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -14,7 +14,7 @@ model Recipe {
   id          String         @id @default(uuid())         // Уникальный ID заказа
   employee    Employee       @relation(fields: [employeeId], references: [id])
   employeeId  String
-  clientName String @default("Неизвестный клиент")        // Имя клиента
+  clientName String @default("Unknown")        // Имя клиента
   price       Float?                                      // Цена заказа (опционально)
   status      RecipeStatus   @default(NEW)               // Текущий статус заказа
   parameters  Parameter[]                                // Поля формы (описание, фото и т.д.)

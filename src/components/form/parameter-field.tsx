@@ -67,12 +67,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
                 />
               ) : type === 'FILE' ? (
                 <div className="flex items-center gap-2">
-                  <Input
-                    name={`parameters.${index}.file`}
-                    type="file"
-                    onChange={onFileChange(index)}
-                  />
-                  <Input type="hidden" {...field} />
+                  <Input type="file" onChange={onFileChange(index)} />
                 </div>
               ) : (
                 <Input {...field} placeholder="Enter text..." />

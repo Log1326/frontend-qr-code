@@ -12,13 +12,14 @@ generator client {
 // Основная модель: заказ, оформляемый через QR-форму
 model Recipe {
   id          String         @id @default(uuid())         // Уникальный ID заказа
-  employee   String @default("АНТОША")                                      // Имя сотрудника, оформившего заказ
-  clientName String @default("Неизвестный клиент")                                     // Имя клиента
+  employee    Employee       @relation(fields: [employeeId], references: [id])
+  employeeId  String
+  clientName String @default("Неизвестный клиент")        // Имя клиента
   price       Float?                                      // Цена заказа (опционально)
-  status      RecipeStatus   @default(NEW)                // Текущий статус заказа
+  status      RecipeStatus   @default(NEW)               // Текущий статус заказа
   parameters  Parameter[]                                // Поля формы (описание, фото и т.д.)
-  events      RecipeEvent[]                              // История действий над заказом
-  createdAt   DateTime       @default(now())              // Время создания заказа
+  events      RecipeEvent[]                             // История действий над заказом
+  createdAt   DateTime       @default(now())             // Время создания заказа
 }
 
 // Поля формы заказа (текст, фото и т.д.)
@@ -39,6 +40,14 @@ model RecipeEvent {
   recipe    Recipe       @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId  String                                        // ID связанного заказа
   createdAt DateTime     @default(now())                  // Время события
+}
+
+model Employee {
+  id        String    @id @default(uuid())         // Уникальный ID сотрудника
+  name      String                                // Имя сотрудника
+  avatarUrl String?                               // URL к аватару (опционально)
+  recipes   Recipe[]                              // Заказы, оформленные этим сотрудником
+  createdAt DateTime  @default(now())             // Время создания записи
 }
 
 // Типы данных, которые могут быть в параметрах формы

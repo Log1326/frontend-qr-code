@@ -8,6 +8,7 @@ export async function POST(
   const file = formData.get('file') as File;
   const blob = await put(file.name, file, {
     access: 'public',
+    allowOverwrite: true,
   });
 
   return NextResponse.json(blob);

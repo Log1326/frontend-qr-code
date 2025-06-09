@@ -52,8 +52,8 @@ const formSchema = z.object({
 type RecipeFormData = z.infer<typeof formSchema>;
 
 const DEFAULT_VALUES: RecipeFormData = {
-  employee: 'Имя сотрудника',
-  clientName: 'Имя клиента',
+  employee: 'Антон Панов',
+  clientName: 'Петушок',
   price: 100,
   status: RecipeStatus.NEW,
   parameters: [
@@ -68,13 +68,14 @@ const DEFAULT_VALUES: RecipeFormData = {
 
 interface RecipeFormProps {
   onQRCodeGenerated: (data: string) => void;
+  setRecipeId: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const RecipeForm: React.FC<RecipeFormProps> = ({
   onQRCodeGenerated,
+  setRecipeId,
 }) => {
   const isMobile = useIsMobile();
-
   const form = useForm<RecipeFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: DEFAULT_VALUES,
@@ -130,6 +131,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
 
       const result = await res.json();
       if (result.id) {
+        setRecipeId(result.id);
         onQRCodeGenerated(`${getOrigin()}/recipes/${result.id}`);
       } else {
         throw new Error('No ID in response');
@@ -153,7 +155,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full max-w-4xl flex-col gap-4 rounded-lg p-4 shadow-md lg:w-1/2">
+          className="flex w-full max-w-4xl flex-col gap-4 rounded-lg p-4 shadow-md ring-1 ring-gray-300 lg:w-1/2">
           <FormField
             control={form.control}
             name="employee"

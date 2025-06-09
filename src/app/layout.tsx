@@ -89,7 +89,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-white antialiased`}>
+        className={`${geistSans.variable} ${geistMono.variable} bg-background antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -99,7 +99,9 @@ export default function RootLayout({
             <AppSidebar />
             <SidebarInset>
               <SiteHeader />
-              <div className="flex justify-center">{children}</div>
+              <div className="flex flex-col items-center justify-center gap-3">
+                {children}
+              </div>
             </SidebarInset>
           </SidebarProvider>
         </ThemeProvider>

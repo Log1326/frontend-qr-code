@@ -12,15 +12,19 @@ import {
   SelectContent,
 } from '@/components/ui/select';
 import { useQRCode } from '@/hooks/useQRCode';
+import QRCodeStyling from 'qr-code-styling';
+import { ShareButton } from './share-button';
 
 type FileExtension = 'svg' | 'png' | 'jpeg' | 'webp';
 
 interface QRGeneratorProps {
   data: string | null;
+  recipeId: string;
 }
 
-export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
+export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
   const [fileExt, setFileExt] = useState<FileExtension>('png');
+  const [qrCode, setQrCode] = useState<QRCodeStyling | null>(null);
   const [qrUrl, setQrUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { generateQRCode } = useQRCode();
@@ -36,13 +40,14 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
 
       try {
         const qrCode = generateQRCode(data);
+        setQrCode(qrCode);
         const rawData = await qrCode.getRawData(fileExt);
 
         if (!rawData) {
           throw new Error('QR code generation failed: no data returned');
         }
 
-        const file = new File([rawData], `qrcode.${fileExt}`, {
+        const file = new File([rawData], `${recipeId}.${fileExt}`, {
           type: `image/${fileExt}`,
         });
 
@@ -71,27 +76,45 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
     uploadQRCode();
   }, [data, fileExt, generateQRCode]);
 
+  const handleDownload = () =>
+    qrCode && qrCode.download({ extension: fileExt });
   if (!data) return null;
 
   return (
-    <div className="flex flex-col items-center gap-4 rounded-lg p-4 shadow-md ring-1 ring-gray-300">
+    <div className="relative flex w-full max-w-4xl flex-col items-center gap-4 rounded-lg p-4 shadow-md ring-1 ring-gray-300 lg:w-1/2">
       <h2 className="text-lg font-semibold">QR Code Generator</h2>
+
+      {loading ? (
+        <p>Uploading QR code...</p>
+      ) : qrUrl ? (
+        <Image
+          src={qrUrl}
+          alt="QR Code"
+          width={384}
+          height={384}
+          className="max-w-sm rounded"
+        />
+      ) : (
+        <p>No QR code generated yet.</p>
+      )}
 
       <div className="flex items-center gap-2">
         <Select
           value={fileExt}
           onValueChange={(value: FileExtension) => setFileExt(value)}>
-          <SelectTrigger className="w-[150px]">
+          <SelectTrigger className="w-36">
             <SelectValue placeholder="Select Format" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="webp">WEBP</SelectItem>
             <SelectItem value="svg">SVG</SelectItem>
             <SelectItem value="png">PNG</SelectItem>
             <SelectItem value="jpeg">JPEG</SelectItem>
-            <SelectItem value="webp">WEBP</SelectItem>
           </SelectContent>
         </Select>
-
+        <Button variant="default" onClick={handleDownload}>
+          Download
+        </Button>
         <Button
           variant="outline"
           onClick={() => {
@@ -101,20 +124,9 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data }) => {
           Open in New Tab
         </Button>
       </div>
-
-      {loading ? (
-        <p>Uploading QR code...</p>
-      ) : qrUrl ? (
-        <Image
-          src={qrUrl}
-          alt="QR Code"
-          width={200}
-          height={200}
-          className="rounded border"
-        />
-      ) : (
-        <p>No QR code generated yet.</p>
-      )}
+      <div className="absolute right-3 top-3">
+        <ShareButton qrCode={qrCode} url={data} />
+      </div>
     </div>
   );
 };

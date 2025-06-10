@@ -11,6 +11,9 @@ import {
 } from '@/components/ui/sidebar';
 import type { MessageKeys } from '@/hooks/useTypedTranslations';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 export function NavMain({
   items,
@@ -22,26 +25,44 @@ export function NavMain({
   }[];
 }) {
   const t = useTypedTranslations();
+  const pathname = usePathname();
+
+  const linkBaseClass =
+    'flex items-center gap-2 min-w-8 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 ease-linear';
+
+  const activeClass = 'bg-primary text-primary-foreground hover:bg-primary/90';
+  const inactiveClass =
+    'text-muted-foreground hover:bg-muted hover:text-foreground';
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <SidebarMenuButton
-              tooltip={t('quickCreate')}
-              className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground">
-              <PlusCircleIcon />
-              <span>{t('quickCreate')}</span>
-            </SidebarMenuButton>
+          <SidebarMenuItem>
+            <Link
+              href="/"
+              className={cn(
+                linkBaseClass,
+                pathname === '/' ? activeClass : inactiveClass,
+              )}>
+              <PlusCircleIcon className="mr-2 h-4 w-4" />
+              {t('quickCreate')}
+            </Link>
           </SidebarMenuItem>
         </SidebarMenu>
+
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}>
-                {item.icon && <item.icon />}
-                <span>{t(item.title)}</span>
-              </SidebarMenuButton>
+              <Link
+                href={item.url}
+                className={cn(
+                  linkBaseClass,
+                  pathname === item.url ? activeClass : inactiveClass,
+                )}>
+                {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+                {t(item.title)}
+              </Link>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

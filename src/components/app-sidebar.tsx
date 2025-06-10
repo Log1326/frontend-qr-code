@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/sidebar';
 import type { MessageKeys } from '@/hooks/useTypedTranslations';
 import { useLocale } from 'next-intl';
+import Link from 'next/link';
 
 const data: {
   user: { name: string; email: string; avatar: string };
@@ -37,15 +38,15 @@ const data: {
     avatar: '',
   },
   navMain: [
-    { title: 'dashboard', url: '#', icon: LayoutDashboardIcon },
-    { title: 'analytics', url: '#', icon: BarChartIcon },
-    { title: 'projects', url: '#', icon: FolderIcon },
-    { title: 'team', url: '#', icon: UsersIcon },
+    { title: 'dashboard', url: '/admin', icon: LayoutDashboardIcon },
+    { title: 'analytics', url: '/analytics', icon: BarChartIcon },
+    { title: 'projects', url: '/folders', icon: FolderIcon },
+    { title: 'team', url: '/team', icon: UsersIcon },
   ],
   navSecondary: [
-    { title: 'settings', url: '#', icon: SettingsIcon },
-    { title: 'getHelp', url: '#', icon: HelpCircleIcon },
-    { title: 'search', url: '#', icon: SearchIcon },
+    { title: 'settings', url: '/settings', icon: SettingsIcon },
+    { title: 'getHelp', url: '/getHelp', icon: HelpCircleIcon },
+    { title: 'search', url: '/search', icon: SearchIcon },
   ],
 };
 
@@ -64,9 +65,9 @@ export const AppSidebar: React.FC<React.ComponentProps<typeof Sidebar>> = ({
             <SidebarMenuButton
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <a href="#">
+              <Link href="/">
                 <span className="text-base font-semibold">Furniture Inc.</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

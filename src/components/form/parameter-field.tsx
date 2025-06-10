@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 
 interface ParameterFieldProps {
   index: number;
@@ -37,6 +38,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
 }) => {
   const { control, register, setValue } = useFormContext();
   const type = useWatch({ control, name: `parameters.${index}.type` });
+  const t = useTypedTranslations();
   return (
     <div className="flex flex-col items-start gap-2 md:flex-row">
       <FormField
@@ -102,9 +104,9 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="TEXT">Text</SelectItem>
-                    <SelectItem value="AREA">Text Area</SelectItem>
-                    <SelectItem value="FILE">File</SelectItem>
+                    <SelectItem value="TEXT">{t('TEXT')}</SelectItem>
+                    <SelectItem value="AREA">{t('AREA')}</SelectItem>
+                    <SelectItem value="FILE">{t('FILE')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

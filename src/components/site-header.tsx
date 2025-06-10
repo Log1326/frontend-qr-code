@@ -1,6 +1,7 @@
 import { ModeToggle } from '@/components/mode-toggle';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { LocaleSwitcher } from '@/components/locale-switcher';
 
 export function SiteHeader() {
   return (
@@ -12,9 +13,11 @@ export function SiteHeader() {
             orientation="vertical"
             className="mx-2 data-[orientation=vertical]:h-4"
           />
-          <p>Documents</p>
         </div>
-        <ModeToggle />
+        <div className="flex items-center gap-2">
+          <LocaleSwitcher />
+          <ModeToggle />
+        </div>
       </div>
     </header>
   );

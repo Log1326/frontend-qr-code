@@ -2,7 +2,6 @@
 
 import {
   BellIcon,
-  CreditCardIcon,
   LogOutIcon,
   MoreVerticalIcon,
   UserCircleIcon,
@@ -24,6 +23,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 
 export function NavUser({
   user,
@@ -35,7 +35,7 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-
+  const t = useTypedTranslations();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -80,21 +80,17 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <UserCircleIcon />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon />
-                Billing
+                {t('account')}
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <BellIcon />
-                Notifications
+                {t('notifications')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <LogOutIcon />
-              Log out
+              {t('logOut')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

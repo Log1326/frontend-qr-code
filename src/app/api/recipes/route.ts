@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
     const status = formData.get('status') as RecipeStatus;
     const priceRaw = formData.get('price') as string | null;
     const price = priceRaw ? parseFloat(priceRaw) : undefined;
-
     if (!employeeName || !clientName || !status) {
       return NextResponse.json(
         { error: 'Missing required fields' },
@@ -24,6 +23,7 @@ export async function POST(req: NextRequest) {
     const employee = await db.employee.findFirst({
       where: { name: employeeName },
     });
+
     const parameters = [];
     let i = 0;
 
@@ -64,13 +64,6 @@ export async function POST(req: NextRequest) {
       });
 
       i++;
-    }
-
-    if (parameters.length === 0) {
-      return NextResponse.json(
-        { error: 'No valid parameters provided' },
-        { status: 400 },
-      );
     }
 
     const recipe = await db.recipe.create({

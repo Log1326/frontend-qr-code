@@ -1,25 +1,16 @@
 'use client';
 
+import type { LucideIcon } from 'lucide-react';
 import {
-  ArrowUpCircleIcon,
   BarChartIcon,
-  CameraIcon,
-  ClipboardListIcon,
-  DatabaseIcon,
-  FileCodeIcon,
-  FileIcon,
-  FileTextIcon,
   FolderIcon,
   HelpCircleIcon,
   LayoutDashboardIcon,
-  ListIcon,
   SearchIcon,
   SettingsIcon,
   UsersIcon,
 } from 'lucide-react';
-import * as React from 'react';
 
-import { NavDocuments } from '@/components/nav-documents';
 import { NavMain } from '@/components/nav-main';
 import { NavSecondary } from '@/components/nav-secondary';
 import { NavUser } from '@/components/nav-user';
@@ -32,127 +23,41 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import type { MessageKeys } from '@/hooks/useTypedTranslations';
+import { useLocale } from 'next-intl';
 
-const data = {
+const data: {
+  user: { name: string; email: string; avatar: string };
+  navMain: { title: MessageKeys; url: string; icon: LucideIcon }[];
+  navSecondary: { title: MessageKeys; url: string; icon: LucideIcon }[];
+} = {
   user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+    name: 'Antonio',
+    email: 'antony@mail.com',
+    avatar: '',
   },
   navMain: [
-    {
-      title: 'Dashboard',
-      url: '#',
-      icon: LayoutDashboardIcon,
-    },
-    {
-      title: 'Lifecycle',
-      url: '#',
-      icon: ListIcon,
-    },
-    {
-      title: 'Analytics',
-      url: '#',
-      icon: BarChartIcon,
-    },
-    {
-      title: 'Projects',
-      url: '#',
-      icon: FolderIcon,
-    },
-    {
-      title: 'Team',
-      url: '#',
-      icon: UsersIcon,
-    },
-  ],
-  navClouds: [
-    {
-      title: 'Capture',
-      icon: CameraIcon,
-      isActive: true,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Proposal',
-      icon: FileTextIcon,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Prompts',
-      icon: FileCodeIcon,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
+    { title: 'dashboard', url: '#', icon: LayoutDashboardIcon },
+    { title: 'analytics', url: '#', icon: BarChartIcon },
+    { title: 'projects', url: '#', icon: FolderIcon },
+    { title: 'team', url: '#', icon: UsersIcon },
   ],
   navSecondary: [
-    {
-      title: 'Settings',
-      url: '#',
-      icon: SettingsIcon,
-    },
-    {
-      title: 'Get Help',
-      url: '#',
-      icon: HelpCircleIcon,
-    },
-    {
-      title: 'Search',
-      url: '#',
-      icon: SearchIcon,
-    },
-  ],
-  documents: [
-    {
-      name: 'Data Library',
-      url: '#',
-      icon: DatabaseIcon,
-    },
-    {
-      name: 'Reports',
-      url: '#',
-      icon: ClipboardListIcon,
-    },
-    {
-      name: 'Word Assistant',
-      url: '#',
-      icon: FileIcon,
-    },
+    { title: 'settings', url: '#', icon: SettingsIcon },
+    { title: 'getHelp', url: '#', icon: HelpCircleIcon },
+    { title: 'search', url: '#', icon: SearchIcon },
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export const AppSidebar: React.FC<React.ComponentProps<typeof Sidebar>> = ({
+  ...props
+}) => {
+  const locale = useLocale();
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar
+      side={locale === 'he' ? 'right' : 'left'}
+      collapsible="offcanvas"
+      {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -160,8 +65,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5">
               <a href="#">
-                <ArrowUpCircleIcon className="h-5 w-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">Furniture Inc.</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -169,7 +73,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
@@ -177,4 +80,4 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
     </Sidebar>
   );
-}
+};

@@ -6,16 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { ShareButton } from '@/components/share-button';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useQRCode } from '@/hooks/useQRCode';
-
-type FileExtension = 'svg' | 'png' | 'jpeg' | 'webp';
 
 interface QRGeneratorProps {
   data: string | null;
@@ -23,7 +14,7 @@ interface QRGeneratorProps {
 }
 
 export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
-  const [fileExt, setFileExt] = useState<FileExtension>('png');
+  const fileExt = 'svg';
   const [qrCode, setQrCode] = useState<QRCodeStyling | null>(null);
   const [qrUrl, setQrUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -39,13 +30,12 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
       setLoading(true);
 
       try {
-        const qrCode = generateQRCode(data);
-        setQrCode(qrCode);
-        const rawData = await qrCode.getRawData(fileExt);
+        const qr = generateQRCode(data);
+        setQrCode(qr);
 
-        if (!rawData) {
+        const rawData = await qr.getRawData(fileExt);
+        if (!rawData)
           throw new Error('QR code generation failed: no data returned');
-        }
 
         const file = new File([rawData], `${recipeId}.${fileExt}`, {
           type: `image/${fileExt}`,
@@ -63,7 +53,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
         if (result?.url) {
           setQrUrl(result.url);
         } else {
-          setQrUrl(null);
+          throw new Error('No URL returned from upload');
         }
       } catch (error) {
         console.error('Upload failed:', error);
@@ -74,10 +64,14 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
     };
 
     uploadQRCode();
-  }, [data, fileExt, generateQRCode]);
+  }, [data, generateQRCode, recipeId]);
 
-  const handleDownload = () =>
-    qrCode && qrCode.download({ extension: fileExt });
+  const handleDownload = () => {
+    if (qrCode) {
+      qrCode.download({ extension: fileExt });
+    }
+  };
+
   if (!data) return null;
 
   return (
@@ -85,7 +79,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
       <h2 className="text-lg font-semibold">QR Code Generator</h2>
 
       {loading ? (
-        <p>Uploading QR code...</p>
+        <p className="text-sm text-gray-500">Uploading QR code...</p>
       ) : qrUrl ? (
         <Image
           src={qrUrl}
@@ -95,35 +89,21 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
           className="max-w-sm rounded"
         />
       ) : (
-        <p>No QR code generated yet.</p>
+        <p className="text-sm text-red-500">QR code is not available</p>
       )}
 
       <div className="flex items-center gap-2">
-        <Select
-          value={fileExt}
-          onValueChange={(value: FileExtension) => setFileExt(value)}>
-          <SelectTrigger className="w-36">
-            <SelectValue placeholder="Select Format" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="webp">WEBP</SelectItem>
-            <SelectItem value="svg">SVG</SelectItem>
-            <SelectItem value="png">PNG</SelectItem>
-            <SelectItem value="jpeg">JPEG</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button variant="default" onClick={handleDownload}>
+        <Button variant="default" onClick={handleDownload} disabled={!qrCode}>
           Download
         </Button>
         <Button
           variant="outline"
-          onClick={() => {
-            if (qrUrl) window.open(qrUrl, '_blank');
-          }}
+          onClick={() => qrUrl && window.open(qrUrl, '_blank')}
           disabled={!qrUrl}>
           Open in New Tab
         </Button>
       </div>
+
       <div className="absolute right-3 top-3">
         <ShareButton qrCode={qrCode} url={data} />
       </div>

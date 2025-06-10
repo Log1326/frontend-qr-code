@@ -6,7 +6,9 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { AppSidebar } from '@/components/app-sidebar';
 import { SiteHeader } from '@/components/site-header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { ThemeProvider } from '@/providers/ThemeProvider';
+import { getLocale } from '@/i18n/locale';
+import { Providers } from '@/providers';
+import { I18nProvider } from '@/providers/i18nProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -80,30 +82,31 @@ export const metadata: Metadata = {
     maximumScale: 1,
   },
 };
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
+  const dir = locale === 'he' ? 'rtl' : 'ltr';
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} dir={dir} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-background antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange>
-          <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-              <SiteHeader />
-              <div className="flex flex-col items-center justify-center gap-3">
-                {children}
-              </div>
-            </SidebarInset>
-          </SidebarProvider>
-        </ThemeProvider>
+        <I18nProvider>
+          <Providers>
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarInset>
+                <SiteHeader />
+                <div className="flex flex-col items-center justify-center gap-3">
+                  {children}
+                </div>
+              </SidebarInset>
+            </SidebarProvider>
+          </Providers>
+        </I18nProvider>
       </body>
     </html>
   );

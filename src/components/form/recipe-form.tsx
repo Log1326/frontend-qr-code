@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/select';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { getOrigin } from '@/lib/getOrigin';
+import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 
 const fieldTypes = Object.values(FieldType) as [FieldType, ...FieldType[]];
 const recipeStatuses = Object.values(RecipeStatus) as [
@@ -56,14 +57,7 @@ const DEFAULT_VALUES: RecipeFormData = {
   clientName: 'Петушок',
   price: 100,
   status: RecipeStatus.NEW,
-  parameters: [
-    {
-      name: 'Описание',
-      type: FieldType.TEXT,
-      description: 'Введите подробности заказа',
-      order: 0,
-    },
-  ],
+  parameters: [],
 };
 
 interface RecipeFormProps {
@@ -75,6 +69,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
   onQRCodeGenerated,
   setRecipeId,
 }) => {
+  const t = useTypedTranslations();
   const isMobile = useIsMobile();
   const form = useForm<RecipeFormData>({
     resolver: zodResolver(formSchema),
@@ -94,7 +89,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
       formData.append('employee', data.employee);
       formData.append('clientName', data.clientName);
       formData.append('status', data.status);
-      if (data.price !== undefined) {
+      if (data.price) {
         formData.append('price', data.price.toString());
       }
 
@@ -113,9 +108,9 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
               fileInput.files[0].name,
             );
           }
-        } else {
+        } else
           formData.append(`parameters.${index}.description`, param.description);
-        }
+
         formData.append(`parameters.${index}.order`, param.order.toString());
       });
 
@@ -133,9 +128,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
       if (result.id) {
         setRecipeId(result.id);
         onQRCodeGenerated(`${getOrigin()}/recipes/${result.id}`);
-      } else {
-        throw new Error('No ID in response');
-      }
+      } else throw new Error('No ID in response');
     } catch (error) {
       console.log(
         'Error submitting form: ' +
@@ -161,7 +154,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
             name="employee"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Employee</FormLabel>
+                <FormLabel>{t('employee')}</FormLabel>
                 <FormControl>
                   <Input placeholder="Employee name" {...field} />
                 </FormControl>
@@ -175,7 +168,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
             name="clientName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Client Name</FormLabel>
+                <FormLabel>{t('clientName')}</FormLabel>
                 <FormControl>
                   <Input placeholder="Client name" {...field} />
                 </FormControl>
@@ -189,7 +182,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
             name="price"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Price (optional)</FormLabel>
+                <FormLabel>{t('price')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -208,7 +201,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Status</FormLabel>
+                <FormLabel>{t('status')}</FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
@@ -217,7 +210,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
                     <SelectContent>
                       {recipeStatuses.map((status) => (
                         <SelectItem key={status} value={status}>
-                          {status}
+                          {t(status)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -252,7 +245,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
                   order: fields.length,
                 })
               }>
-              Add Parameter
+              {t('addParameter')}
             </Button>
           )}
 
@@ -268,7 +261,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
                 <Loader2 className="ml-2 h-4 w-4 animate-spin text-blue-400" />
               </>
             ) : (
-              'Create QR-CODE'
+              t('createQRCode')
             )}
           </Button>
         </form>

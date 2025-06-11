@@ -15,14 +15,19 @@ model Recipe {
   employee    Employee       @relation(fields: [employeeId], references: [id])
   employeeId  String
   clientName String @default("Unknown")        // Имя клиента
-  price       Float?                                      // Цена заказа (опционально)
+  price       Float                                      // Цена заказа
   status      RecipeStatus   @default(NEW)               // Текущий статус заказа
   parameters  Parameter[]                                // Поля формы (описание, фото и т.д.)
   events      RecipeEvent[]                              // История действий над заказом
   qrCodeUrl   String?                                      // URL на сохранённый QR-код (если есть)
   createdAt   DateTime       @default(now())             // Время создания заказа
 }
-
+// Возможные статусы заказа
+enum RecipeStatus {
+  NEW           // Новый
+  IN_PROGRESS   // В процессе выполнения
+  COMPLETED     // Завершён
+}
 // Поля формы заказа (текст, фото и т.д.)
 model Parameter {
   id        String     @id @default(uuid())               // Уникальный ID параметра
@@ -33,14 +38,26 @@ model Parameter {
   recipe    Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId  String                                        // ID связанного заказа
 }
-
+// Типы данных, которые могут быть в параметрах формы
+enum FieldType {
+  TEXT       // Однострочное текстовое поле
+  AREA       // Многострочное текстовое поле
+  FILE       // Файл (изображение и т.д.)
+}
 // События над заказом: просмотр, изменение, смена статуса
 model RecipeEvent {
   id        String       @id @default(uuid())             // Уникальный ID события
-  type      EventType                                    // Тип события
+  type      EventType                         // Тип события
   recipe    Recipe       @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId  String                                        // ID связанного заказа
   createdAt DateTime     @default(now())                  // Время события
+}
+// События, фиксируемые в системе
+enum EventType {
+  CREATED         // Заказ создан
+  VIEWED          // Заказ просмотрен в админке
+  STATUS_CHANGE   // Статус изменён
+  UPDATED         // Заказ отредактирован
 }
 
 model Employee {
@@ -49,26 +66,4 @@ model Employee {
   avatarUrl String?                               // URL к аватару (опционально)
   recipes   Recipe[]                              // Заказы, оформленные этим сотрудником
   createdAt DateTime  @default(now())             // Время создания записи
-}
-
-// Типы данных, которые могут быть в параметрах формы
-enum FieldType {
-  TEXT       // Однострочное текстовое поле
-  AREA       // Многострочное текстовое поле
-  FILE       // Файл (изображение и т.д.)
-}
-
-// Возможные статусы заказа
-enum RecipeStatus {
-  NEW           // Новый
-  IN_PROGRESS   // В процессе выполнения
-  COMPLETED     // Завершён
-}
-
-// События, фиксируемые в системе
-enum EventType {
-  CREATED         // Заказ создан
-  VIEWED          // Заказ просмотрен в админке
-  STATUS_CHANGE   // Статус изменён
-  UPDATED         // Заказ отредактирован
 }

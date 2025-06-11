@@ -27,19 +27,18 @@ export async function POST(req: NextRequest) {
     const parameters = [];
     let i = 0;
 
-    while (formData.has(`parameters.${i}.type`)) {
-      const name = formData.get(`parameters.${i}.name`) as string;
-      const type = formData.get(`parameters.${i}.type`) as FieldType;
-      let description = formData.get(`parameters.${i}.description`) as string;
-      const order = formData.get(`parameters.${i}.order`);
-
+    while (formData.has(`parameters[${i}][type]`)) {
+      const name = formData.get(`parameters[${i}][name]`) as string;
+      const type = formData.get(`parameters[${i}][type]`) as FieldType;
+      let description = formData.get(`parameters[${i}][description]`) as string;
+      const order = formData.get(`parameters[${i}][order]`);
       if (!name || !type || !order) {
         i++;
         continue;
       }
 
       if (type === 'FILE') {
-        const file = formData.get(`parameters.${i}.file`) as File;
+        const file = formData.get(`parameters[${i}][file]`) as File;
         if (file) {
           try {
             description = await fileToBase64(file);

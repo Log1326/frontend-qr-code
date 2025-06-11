@@ -30,5 +30,7 @@
   "columns": "עמודות",
   "edit": "עריכה",
   "link": "קישור",
-  "delete": "מחיקה"
+  "delete": "מחיקה",
+  "filterClientName": "סינון לפי שם הלקוח",
+  "noResults": "אין תוצאות"
 }

@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldType, RecipeStatus } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
-import type { SubmitHandler } from 'react-hook-form';
+import type { Path, SubmitHandler } from 'react-hook-form';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -30,15 +30,14 @@ import { getOrigin } from '@/lib/getOrigin';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { useState } from 'react';
 
-const fieldTypes = Object.values(FieldType) as [FieldType, ...FieldType[]];
 const recipeStatuses = Object.values(RecipeStatus) as [
   RecipeStatus,
   ...RecipeStatus[],
 ];
 
-const parameterSchema = z.object({
+const parameterItemSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  type: z.enum(fieldTypes),
+  type: z.nativeEnum(FieldType),
   description: z.string(),
   order: z.number(),
 });
@@ -48,7 +47,7 @@ const formSchema = z.object({
   clientName: z.string().min(1, 'Client name is required'),
   price: z.number(),
   status: z.enum(recipeStatuses),
-  parameters: z.array(parameterSchema),
+  parameters: z.array(parameterItemSchema),
 });
 
 type RecipeFormData = z.infer<typeof formSchema>;
@@ -90,30 +89,35 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
       formData.append('employee', data.employee);
       formData.append('clientName', data.clientName);
       formData.append('status', data.status);
-      if (data.price) {
-        formData.append('price', data.price.toString());
-      }
-
-      data.parameters.forEach((param, index) => {
-        formData.append(`parameters.${index}.name`, param.name);
-        formData.append(`parameters.${index}.type`, param.type);
+      if (data.price) formData.append('price', data.price.toString());
+      for (let index = 0; index < data.parameters.length; index++) {
+        const param = data.parameters[index];
+        formData.append(`parameters[${index}][name]`, param.name);
+        formData.append(`parameters[${index}][type]`, param.type);
+        formData.append(`parameters[${index}][order]`, param.order.toString());
 
         if (param.type === FieldType.FILE) {
           const fileInput = document.querySelector(
             `input[name="parameters.${index}.file"]`,
           ) as HTMLInputElement;
+
           if (fileInput?.files?.[0]) {
-            formData.append(`parameters.${index}.file`, fileInput.files[0]);
+            formData.append(`parameters[${index}][file]`, fileInput.files[0]);
             formData.append(
-              `parameters.${index}.description`,
+              `parameters[${index}][description]`,
               fileInput.files[0].name,
             );
-          }
+          } else
+            formData.append(
+              `parameters[${index}][description]`,
+              param.description,
+            );
         } else
-          formData.append(`parameters.${index}.description`, param.description);
-
-        formData.append(`parameters.${index}.order`, param.order.toString());
-      });
+          formData.append(
+            `parameters[${index}][description]`,
+            param.description,
+          );
+      }
 
       const res = await fetch('/api/recipes', {
         method: 'POST',
@@ -121,19 +125,21 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
       });
 
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.details || 'Failed to create recipe');
+        const errorText = await res.text();
+        throw new Error(`HTTP ${res.status}: ${errorText}`);
       }
 
       const result = await res.json();
       if (result.id) {
         setRecipeId(result.id);
         onQRCodeGenerated(`${getOrigin()}/recipes/${result.id}`);
-      } else throw new Error('No ID in response');
+      } else {
+        throw new Error('No ID in response');
+      }
     } catch (error) {
-      console.log(
-        'Error submitting form: ' +
-          (error instanceof Error ? error.message : 'Unknown error'),
+      console.error(
+        'Submit error:',
+        error instanceof Error ? error.message : error,
       );
     }
   };
@@ -141,7 +147,10 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
   const handleFileChange =
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      form.setValue(`parameters.${index}.description`, file?.name || '');
+      form.setValue(
+        `parameters[${index}][description]` as Path<RecipeFormData>,
+        file?.name || '',
+      );
     };
 
   const formatter = new Intl.NumberFormat('he-IL', {

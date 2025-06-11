@@ -83,6 +83,7 @@ import { schema } from './types';
 import { columns } from './constants';
 import { useId, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Input } from '../ui/input';
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -175,6 +176,16 @@ export function DataTable({
       defaultValue="outline"
       className="flex w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
+        <Input
+          placeholder={t('filterClientName')}
+          value={
+            (table.getColumn('clientName')?.getFilterValue() as string) ?? ''
+          }
+          onChange={(event) =>
+            table.getColumn('clientName')?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm">
@@ -251,16 +262,16 @@ export function DataTable({
                                 transition:
                                   'transform 0.3s ease, opacity 0.3s ease',
                                 transform:
-                                  header.column.getIsSorted() === 'asc'
+                                  header.column.getIsSorted() === 'desc'
                                     ? 'rotate(0deg)'
-                                    : header.column.getIsSorted() === 'desc'
+                                    : header.column.getIsSorted() === 'asc'
                                       ? 'rotate(180deg)'
                                       : 'rotate(0deg)',
                                 opacity: header.column.getIsSorted() ? 1 : 0.3,
                                 color:
-                                  header.column.getIsSorted() === 'asc'
+                                  header.column.getIsSorted() === 'desc'
                                     ? '#22c55e'
-                                    : header.column.getIsSorted() === 'desc'
+                                    : header.column.getIsSorted() === 'asc'
                                       ? '#ef4444'
                                       : '#9ca3af',
                               }}
@@ -287,7 +298,7 @@ export function DataTable({
                     <TableCell
                       colSpan={columns.length}
                       className="h-24 text-center">
-                      No results.
+                      {t('noResults')}
                     </TableCell>
                   </TableRow>
                 )}

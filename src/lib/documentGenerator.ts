@@ -1,58 +1,119 @@
+'use client';
 import type { Prisma } from '@prisma/client';
-import { Document, ImageRun, Packer, Paragraph } from 'docx';
+import { Document, Packer, Paragraph, TextRun, ImageRun } from 'docx';
 import { saveAs } from 'file-saver';
 
 type RecipeWithParameters = Prisma.RecipeGetPayload<{
-  include: { parameters: true };
+  include: {
+    employee: {
+      select: {
+        name: true;
+      };
+    };
+    parameters: true;
+  };
 }>;
+
 export const downloadAsDoc = async (
   recipe: RecipeWithParameters,
 ): Promise<void> => {
   try {
+    const paragraphs: Paragraph[] = [];
+
+    paragraphs.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: `🧾 Заказ от: ${recipe.clientName}`,
+            bold: true,
+          }),
+        ],
+        spacing: { after: 200 },
+      }),
+      new Paragraph({
+        text: `Сотрудник: ${recipe.employee.name}`,
+        spacing: { after: 100 },
+      }),
+      new Paragraph({
+        text: `Статус: ${recipe.status}`,
+        spacing: { after: 100 },
+      }),
+      new Paragraph({
+        text: `Цена: ${recipe.price} ₪`,
+        spacing: { after: 100 },
+      }),
+      new Paragraph({
+        text: `Создан: ${new Date(recipe.createdAt).toLocaleString()}`,
+        spacing: { after: 300 },
+      }),
+    );
+
+    // Параметры
+    recipe.parameters?.forEach((param, i) => {
+      paragraphs.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: `${i + 1}. ${param.name}:`,
+              bold: true,
+            }),
+          ],
+          spacing: { after: 100 },
+        }),
+      );
+
+      if (param.type === 'FILE' && param.description.startsWith('data:')) {
+        try {
+          const base64Data = param.description.split(',')[1];
+          const imageBuffer = Uint8Array.from(atob(base64Data), (c) =>
+            c.charCodeAt(0),
+          ).buffer;
+
+          paragraphs.push(
+            new Paragraph({
+              children: [
+                new ImageRun({
+                  data: imageBuffer,
+                  transformation: {
+                    width: 400,
+                    height: 300,
+                  },
+                  type: 'png',
+                }),
+              ],
+              spacing: { after: 300 },
+            }),
+          );
+        } catch (err) {
+          paragraphs.push(
+            new Paragraph({
+              text: '❌ Не удалось загрузить изображение.',
+              spacing: { after: 300 },
+            }),
+          );
+        }
+      } else {
+        paragraphs.push(
+          new Paragraph({
+            text: param.description,
+            spacing: { after: 200 },
+          }),
+        );
+      }
+    });
+
+    // Генерация документа
     const doc = new Document({
       sections: [
         {
-          properties: {},
-          children: [
-            new Paragraph({
-              text: recipe.employee,
-              spacing: { after: 200 },
-            }),
-            new Paragraph({
-              text: `Created: ${recipe.createdAt.toLocaleString()}`,
-              spacing: { after: 200 },
-            }),
-            ...(recipe.parameters?.map((param) => {
-              if (param.type === 'FILE') {
-                const base64Data = param.description.split(',')[1];
-
-                return new Paragraph({
-                  children: [
-                    new ImageRun({
-                      data: base64Data,
-                      transformation: {
-                        width: 400,
-                        height: 300,
-                      },
-                      type: 'png',
-                    }),
-                  ],
-                  spacing: { after: 200 },
-                });
-              }
-              return new Paragraph({
-                text: `${param.name}: ${param.description}`,
-                spacing: { after: 200 },
-              });
-            }) || []),
-          ],
+          children: paragraphs,
         },
       ],
     });
 
     const blob = await Packer.toBlob(doc);
-    saveAs(blob, `${recipe.clientName}.docx`);
+    saveAs(blob, `${recipe.clientName}_recipe.docx`);
   } catch (error) {
-    console.error('Error creating document:', error);
+    console.error('Ошибка создания документа:', error);
   }
 };

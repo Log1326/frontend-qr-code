@@ -37,13 +37,13 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
   onFileChange,
 }) => {
   const { control, register, setValue } = useFormContext();
-  const type = useWatch({ control, name: `parameters.${index}.type` });
+  const type = useWatch({ control, name: `parameters[${index}][type]` });
   const t = useTypedTranslations();
   return (
     <div className="flex flex-col items-start gap-2 md:flex-row">
       <FormField
         control={control}
-        name={`parameters.${index}.name`}
+        name={`parameters[${index}][name]`}
         render={({ field }) => (
           <FormItem className="w-full md:w-auto">
             <FormControl>
@@ -56,7 +56,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
 
       <FormField
         control={control}
-        name={`parameters.${index}.description`}
+        name={`parameters[${index}][description]`}
         render={({ field }) => (
           <FormItem className="w-full">
             <FormControl>
@@ -81,7 +81,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
 
       <Input
         type="hidden"
-        {...register(`parameters.${index}.order`)}
+        {...register(`parameters[${index}][order]`)}
         value={index}
       />
 
@@ -89,13 +89,13 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
         <div className="flex items-center gap-1">
           <FormField
             control={control}
-            name={`parameters.${index}.type`}
+            name={`parameters[${index}][type]`}
             render={({ field }) => (
               <FormItem className="w-full md:w-auto">
                 <Select
                   onValueChange={(value) => {
                     field.onChange(value);
-                    setValue(`parameters.${index}.description`, '');
+                    setValue(`parameters[${index}][description]`, '');
                   }}
                   value={field.value}>
                   <FormControl>

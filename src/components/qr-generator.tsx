@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { ShareButton } from '@/components/share-button';
 import { Button } from '@/components/ui/button';
 import { useQRCode } from '@/hooks/useQRCode';
+import { useRouter } from 'next/navigation';
 
 interface QRGeneratorProps {
   data: string | null;
@@ -19,9 +20,9 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
   const [qrUrl, setQrUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { generateQRCode } = useQRCode();
-
+  const router = useRouter();
   useEffect(() => {
-    if (!data || qrUrl) return;
+    if (!data || !recipeId || qrUrl) return;
     const uploadQRCode = async () => {
       if (!data) {
         setQrUrl(null);
@@ -44,7 +45,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
 
         const formData = new FormData();
         formData.append('file', file);
-
+        formData.append('recipeId', recipeId);
         const res = await fetch('/api/upload', {
           method: 'POST',
           body: formData,
@@ -99,7 +100,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
         </Button>
         <Button
           variant="outline"
-          onClick={() => qrUrl && window.open(qrUrl, '_blank')}
+          onClick={() => router.push('/recipes/' + recipeId)}
           disabled={!qrUrl}>
           Open in New Tab
         </Button>

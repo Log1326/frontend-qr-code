@@ -1,9 +1,5 @@
-import {
-  PrismaClient,
-  FieldType,
-  EventType,
-  RecipeStatus,
-} from '@prisma/client';
+import type { RecipeStatus } from '@prisma/client';
+import { EventType, FieldType, PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 

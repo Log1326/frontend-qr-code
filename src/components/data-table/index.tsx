@@ -36,28 +36,27 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  ArrowDownNarrowWide,
   ArrowUpWideNarrow,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronsLeftIcon,
   ChevronsRightIcon,
-  ChevronUpIcon,
   ColumnsIcon,
-  Grab,
-  GripVertical,
 } from 'lucide-react';
-import { z } from 'zod';
+import { useId, useMemo, useState } from 'react';
+import type { z } from 'zod';
 
+import { columns } from '@/components/data-table/constants';
+import type { schema } from '@/components/data-table/types';
 import { Button } from '@/components/ui/button';
-
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -75,15 +74,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import {
-  MessageKeys,
-  useTypedTranslations,
-} from '@/hooks/useTypedTranslations';
-import { schema } from './types';
-import { columns } from './constants';
-import { useId, useMemo, useState } from 'react';
+import type { MessageKeys } from '@/hooks/useTypedTranslations';
+import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { cn } from '@/lib/utils';
-import { Input } from '../ui/input';
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({

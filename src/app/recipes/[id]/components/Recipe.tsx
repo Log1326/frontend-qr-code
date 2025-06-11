@@ -1,14 +1,13 @@
 'use client';
 import type { Prisma } from '@prisma/client';
-import { QrCode } from 'lucide-react';
 import Image from 'next/image';
+import { useLocale } from 'next-intl';
 
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { downloadAsDoc } from '@/lib/documentGenerator';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
-import { useLocale } from 'next-intl';
+import { downloadAsDoc } from '@/lib/documentGenerator';
 
 type RecipeWithParameters = Prisma.RecipeGetPayload<{
   include: {

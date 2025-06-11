@@ -1,13 +1,13 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import type QRCodeStyling from 'qr-code-styling';
 import { useEffect, useState } from 'react';
 
 import { ShareButton } from '@/components/share-button';
 import { Button } from '@/components/ui/button';
 import { useQRCode } from '@/hooks/useQRCode';
-import { useRouter } from 'next/navigation';
 
 interface QRGeneratorProps {
   data: string | null;

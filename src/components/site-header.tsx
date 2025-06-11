@@ -1,7 +1,7 @@
+import { LocaleSwitcher } from '@/components/locale-switcher';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { LocaleSwitcher } from '@/components/locale-switcher';
 
 export function SiteHeader() {
   return (

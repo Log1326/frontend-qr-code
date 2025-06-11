@@ -1,6 +1,7 @@
+import type { RecipeStatus } from '@prisma/client';
+
 import { DataTable } from '@/components/data-table';
 import { db } from '@/lib/prisma';
-import { RecipeStatus } from '@prisma/client';
 
 async function getDataTable(): Promise<
   {

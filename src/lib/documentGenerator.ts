@@ -1,6 +1,6 @@
 'use client';
 import type { Prisma } from '@prisma/client';
-import { Document, Packer, Paragraph, TextRun, ImageRun } from 'docx';
+import { Document, ImageRun, Packer, Paragraph, TextRun } from 'docx';
 import { saveAs } from 'file-saver';
 
 type RecipeWithParameters = Prisma.RecipeGetPayload<{
@@ -48,7 +48,6 @@ export const downloadAsDoc = async (
       }),
     );
 
-    // Параметры
     recipe.parameters?.forEach((param, i) => {
       paragraphs.push(
         new Paragraph({
@@ -84,7 +83,7 @@ export const downloadAsDoc = async (
               spacing: { after: 300 },
             }),
           );
-        } catch (err) {
+        } catch {
           paragraphs.push(
             new Paragraph({
               text: '❌ Не удалось загрузить изображение.',
@@ -102,7 +101,6 @@ export const downloadAsDoc = async (
       }
     });
 
-    // Генерация документа
     const doc = new Document({
       sections: [
         {
@@ -114,6 +112,6 @@ export const downloadAsDoc = async (
     const blob = await Packer.toBlob(doc);
     saveAs(blob, `${recipe.clientName}_recipe.docx`);
   } catch (error) {
-    console.error('Ошибка создания документа:', error);
+    console.log('Ошибка создания документа:', error);
   }
 };

@@ -1,24 +1,25 @@
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
   CheckCircle2Icon,
-  OctagonAlert,
   LoaderIcon,
   MoreVerticalIcon,
+  OctagonAlert,
 } from 'lucide-react';
-import z from 'zod';
-import { schema } from './types';
-import { Badge } from '../ui/badge';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
+import type z from 'zod';
+
+import type { schema } from '@/components/data-table/types';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
-import { Button } from '../ui/button';
-import { useLocale } from 'next-intl';
+} from '@/components/ui/dropdown-menu';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
-import { useRouter } from 'next/navigation';
 
 export const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
@@ -78,44 +79,47 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: 'createdAt',
     header: 'createdAt',
     enableSorting: true,
-    cell: ({ row }) => {
-      const locale = useLocale();
-      return (
-        <div className="flex w-fit gap-1 text-muted-foreground [&_svg]:size-3">
-          {new Intl.DateTimeFormat(locale, {
-            dateStyle: 'medium',
-          }).format(new Date(row.original.createdAt))}
-        </div>
-      );
-    },
+    cell: ({ row }) => <CreatedAtCell date={row.original.createdAt} />,
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const t = useTypedTranslations();
-      const router = useRouter();
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
-              size="icon">
-              <MoreVerticalIcon />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-32">
-            <DropdownMenuItem>{t('edit')}</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push('recipes/' + row.id)}>
-              {t('link')}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>{t('delete')}</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => <ActionsCell id={row.id} />,
   },
 ];
+const CreatedAtCell: React.FC<{ date: string }> = ({ date }) => {
+  const locale = useLocale();
+  return (
+    <div className="flex w-fit gap-1 text-muted-foreground [&_svg]:size-3">
+      {new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(
+        new Date(date),
+      )}
+    </div>
+  );
+};
+const ActionsCell: React.FC<{ id: string }> = ({ id }) => {
+  const t = useTypedTranslations();
+  const router = useRouter();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
+          size="icon">
+          <MoreVerticalIcon />
+          <span className="sr-only">Open menu</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-32">
+        <DropdownMenuItem>{t('edit')}</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => router.push('recipes/' + id)}>
+          {t('link')}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>{t('delete')}</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};

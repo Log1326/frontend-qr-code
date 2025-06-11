@@ -1,9 +1,9 @@
+import { EventType } from '@prisma/client';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { Recipe } from '@/app/recipes/[id]/components/Recipe';
 import { db } from '@/lib/prisma';
-import { EventType } from '@prisma/client';
 
 type Props = {
   params: Promise<{ id: string }>;

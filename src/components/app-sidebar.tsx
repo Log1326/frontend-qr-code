@@ -10,6 +10,8 @@ import {
   SettingsIcon,
   UsersIcon,
 } from 'lucide-react';
+import Link from 'next/link';
+import { useLocale } from 'next-intl';
 
 import { NavMain } from '@/components/nav-main';
 import { NavSecondary } from '@/components/nav-secondary';
@@ -24,8 +26,6 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import type { MessageKeys } from '@/hooks/useTypedTranslations';
-import { useLocale } from 'next-intl';
-import Link from 'next/link';
 
 const data: {
   user: { name: string; email: string; avatar: string };

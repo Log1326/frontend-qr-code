@@ -1,8 +1,9 @@
-import { db } from '@/lib/prisma';
 import type { PutBlobResult } from '@vercel/blob';
 import { put } from '@vercel/blob';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+
+import { db } from '@/lib/prisma';
 
 export async function POST(
   req: NextRequest,

@@ -1,18 +1,17 @@
 'use client';
 
 import { type LucideIcon, PlusCircleIcon } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import type { MessageKeys } from '@/hooks/useTypedTranslations';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 export function NavMain({

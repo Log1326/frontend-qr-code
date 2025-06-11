@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const clientName = formData.get('clientName') as string;
     const status = formData.get('status') as RecipeStatus;
     const priceRaw = formData.get('price') as string | null;
-    const price = priceRaw ? parseFloat(priceRaw) : undefined;
+    const price = priceRaw ? parseFloat(priceRaw) : 0;
     if (!employeeName || !clientName || !status) {
       return NextResponse.json(
         { error: 'Missing required fields' },

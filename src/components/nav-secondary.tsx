@@ -10,10 +10,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import {
-  MessageKeys,
-  useTypedTranslations,
-} from '@/hooks/useTypedTranslations';
+import type { MessageKeys } from '@/hooks/useTypedTranslations';
+import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 
 export function NavSecondary({
   items,

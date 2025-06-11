@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldType, RecipeStatus } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import type { Path, SubmitHandler } from 'react-hook-form';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -26,9 +27,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { getOrigin } from '@/lib/getOrigin';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
-import { useState } from 'react';
+import { getOrigin } from '@/lib/getOrigin';
 
 const recipeStatuses = Object.values(RecipeStatus) as [
   RecipeStatus,
@@ -69,6 +69,15 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
   onQRCodeGenerated,
   setRecipeId,
 }) => {
+  const formatter = new Intl.NumberFormat('he-IL', {
+    style: 'currency',
+    currency: 'ILS',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+  const [localPrice, setLocalPrice] = useState(
+    DEFAULT_VALUES.price ? formatter.format(DEFAULT_VALUES.price) : '',
+  );
   const t = useTypedTranslations();
   const isMobile = useIsMobile();
   const form = useForm<RecipeFormData>({
@@ -153,13 +162,6 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
       );
     };
 
-  const formatter = new Intl.NumberFormat('he-IL', {
-    style: 'currency',
-    currency: 'ILS',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  });
-
   return (
     <FormProvider {...form}>
       <Form {...form}>
@@ -197,50 +199,43 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
           <FormField
             control={form.control}
             name="price"
-            render={({ field }) => {
-              const [localValue, setLocalValue] = useState(
-                field.value ? formatter.format(Number(field.value)) : '',
-              );
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('price')}</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder={t('price')}
+                    value={localPrice}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^\d]/g, '');
+                      setLocalPrice(e.target.value);
 
-              return (
-                <FormItem>
-                  <FormLabel>{t('price')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder={t('price')}
-                      value={localValue}
-                      onChange={(e) => {
-                        const raw = e.target.value.replace(/[^\d]/g, '');
-                        setLocalValue(e.target.value);
-
-                        if (raw === '') {
-                          field.onChange('');
-                        } else {
-                          field.onChange(Number(raw));
-                        }
-                      }}
-                      onBlur={() => {
-                        if (field.value !== 0 && field.value != null) {
-                          setLocalValue(formatter.format(Number(field.value)));
-                        } else {
-                          setLocalValue('');
-                        }
-                      }}
-                      onFocus={() => {
-                        if (field.value !== 0 && field.value != null) {
-                          setLocalValue(String(field.value));
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
+                      if (raw === '') {
+                        field.onChange('');
+                      } else {
+                        field.onChange(Number(raw));
+                      }
+                    }}
+                    onBlur={() => {
+                      if (field.value !== 0 && field.value != null) {
+                        setLocalPrice(formatter.format(Number(field.value)));
+                      } else {
+                        setLocalPrice('');
+                      }
+                    }}
+                    onFocus={() => {
+                      if (field.value !== 0 && field.value != null) {
+                        setLocalPrice(String(field.value));
+                      }
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-
           <FormField
             control={form.control}
             name="status"

@@ -28,6 +28,7 @@ import {
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { getOrigin } from '@/lib/getOrigin';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
+import { useState } from 'react';
 
 const fieldTypes = Object.values(FieldType) as [FieldType, ...FieldType[]];
 const recipeStatuses = Object.values(RecipeStatus) as [
@@ -45,7 +46,7 @@ const parameterSchema = z.object({
 const formSchema = z.object({
   employee: z.string().min(1, 'Employee name is required'),
   clientName: z.string().min(1, 'Client name is required'),
-  price: z.number().optional(),
+  price: z.number(),
   status: z.enum(recipeStatuses),
   parameters: z.array(parameterSchema),
 });
@@ -55,7 +56,7 @@ type RecipeFormData = z.infer<typeof formSchema>;
 const DEFAULT_VALUES: RecipeFormData = {
   employee: 'Антон Панов',
   clientName: 'Петушок',
-  price: 100,
+  price: 1500,
   status: RecipeStatus.NEW,
   parameters: [],
 };
@@ -142,7 +143,14 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
       const file = e.target.files?.[0];
       form.setValue(`parameters.${index}.description`, file?.name || '');
     };
-  form.handleSubmit;
+
+  const formatter = new Intl.NumberFormat('he-IL', {
+    style: 'currency',
+    currency: 'ILS',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+
   return (
     <FormProvider {...form}>
       <Form {...form}>
@@ -180,20 +188,48 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
           <FormField
             control={form.control}
             name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('price')}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    step="100"
-                    placeholder="Price"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const [localValue, setLocalValue] = useState(
+                field.value ? formatter.format(Number(field.value)) : '',
+              );
+
+              return (
+                <FormItem>
+                  <FormLabel>{t('price')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder={t('price')}
+                      value={localValue}
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/[^\d]/g, '');
+                        setLocalValue(e.target.value);
+
+                        if (raw === '') {
+                          field.onChange('');
+                        } else {
+                          field.onChange(Number(raw));
+                        }
+                      }}
+                      onBlur={() => {
+                        if (field.value !== 0 && field.value != null) {
+                          setLocalValue(formatter.format(Number(field.value)));
+                        } else {
+                          setLocalValue('');
+                        }
+                      }}
+                      onFocus={() => {
+                        if (field.value !== 0 && field.value != null) {
+                          setLocalValue(String(field.value));
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
 
           <FormField

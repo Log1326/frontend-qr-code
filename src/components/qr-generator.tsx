@@ -10,7 +10,7 @@ import { useQRCode } from '@/hooks/useQRCode';
 
 interface QRGeneratorProps {
   data: string | null;
-  recipeId: string;
+  recipeId?: string;
 }
 
 export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
@@ -21,6 +21,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
   const { generateQRCode } = useQRCode();
 
   useEffect(() => {
+    if (!data || qrUrl) return;
     const uploadQRCode = async () => {
       if (!data) {
         setQrUrl(null);
@@ -64,7 +65,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
     };
 
     uploadQRCode();
-  }, [data, generateQRCode, recipeId]);
+  }, [data, generateQRCode, recipeId, qrUrl]);
 
   const handleDownload = () => {
     if (qrCode) {
@@ -86,7 +87,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
           alt="QR Code"
           width={384}
           height={384}
-          className="max-w-sm rounded"
+          className="ring-gray-20 max-w-sm rounded border"
         />
       ) : (
         <p className="text-sm text-red-500">QR code is not available</p>

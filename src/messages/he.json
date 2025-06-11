@@ -9,7 +9,7 @@
   "search": "חיפוש",
   "employee": "עובד",
   "clientName": "לקוח",
-  "price": "מחיר (לא חובה)",
+  "price": "מחיר",
   "status": "סטטוס",
   "selectStatus": "בחר סטטוס",
   "addParameter": "הוסף פרמטר",
@@ -23,5 +23,12 @@
   "FILE": "קובץ",
   "account": "חשבון",
   "notifications": "התראות",
-  "logOut": "התנתקות"
+  "logOut": "התנתקות",
+  "employeeName": "שם עובד",
+  "createdAt": "נוצר בתאריך",
+  "customizeColumns": "התאמה אישית של עמודות",
+  "columns": "עמודות",
+  "edit": "עריכה",
+  "link": "קישור",
+  "delete": "מחיקה"
 }

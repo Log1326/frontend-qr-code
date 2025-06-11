@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { defaultLocale } from '@/i18n/config';
 import type { Locale } from '@/i18n/types';
 
-const COOKIE_NAME = 'locale-ohwat';
+const COOKIE_NAME = 'lan';
 
 const getLocale = async () => {
   return (await cookies()).get(COOKIE_NAME)?.value || defaultLocale;

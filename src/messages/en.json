@@ -9,8 +9,10 @@
   "search": "Search",
   "employee": "Employee",
   "clientName": "Client",
-  "price": "Price (optional)",
+  "price": "Price",
   "status": "Status",
+  "employeeName": "Employee name",
+  "createdAt": "Created at",
   "selectStatus": "Select status",
   "addParameter": "Add Parameter",
   "creating": "Creating",
@@ -23,5 +25,10 @@
   "FILE": "File",
   "account": "Account",
   "notifications": "Notifications",
-  "logOut": "Log out"
+  "logOut": "Log out",
+  "customizeColumns": "Customize Columns",
+  "columns": "Columns",
+  "edit": "Edit",
+  "link": "Link",
+  "delete": "Delete"
 }

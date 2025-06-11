@@ -9,7 +9,7 @@
   "search": "Поиск",
   "employee": "Сотрудник",
   "clientName": "Клиент",
-  "price": "Цена (необязательно)",
+  "price": "Цена",
   "status": "Статус",
   "selectStatus": "Выберите статус",
   "addParameter": "Добавить параметр",
@@ -23,5 +23,12 @@
   "FILE": "Файл",
   "account": "Аккаунт",
   "notifications": "Уведомления",
-  "logOut": "Выйти"
+  "logOut": "Выйти",
+  "employeeName": "Имя сотрудника",
+  "createdAt": "Дата создания",
+  "customizeColumns": "Настроить столбцы",
+  "columns": "Столбцы",
+  "edit": "Редактировать",
+  "link": "Ссылка",
+  "delete": "Удалить"
 }

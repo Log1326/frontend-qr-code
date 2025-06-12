@@ -8,21 +8,18 @@ import { db } from '@/lib/prisma';
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-
-    const employeeName = formData.get('employee') as string;
+    const employeeId = formData.get('employee') as string;
     const clientName = formData.get('clientName') as string;
     const status = formData.get('status') as RecipeStatus;
     const priceRaw = formData.get('price') as string | null;
     const price = priceRaw ? parseFloat(priceRaw) : 0;
-    if (!employeeName || !clientName || !status) {
+
+    if (!employeeId || !clientName || !status) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 },
       );
     }
-    const employee = await db.employee.findFirst({
-      where: { name: employeeName },
-    });
 
     const parameters = [];
     let i = 0;
@@ -69,7 +66,7 @@ export async function POST(req: NextRequest) {
       data: {
         employee: {
           connect: {
-            id: employee?.id,
+            id: employeeId,
           },
         },
         clientName,

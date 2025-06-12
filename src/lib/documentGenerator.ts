@@ -1,6 +1,12 @@
-'use client';
 import type { Prisma } from '@prisma/client';
-import { Document, ImageRun, Packer, Paragraph, TextRun } from 'docx';
+import {
+  Document,
+  ExternalHyperlink,
+  ImageRun,
+  Packer,
+  Paragraph,
+  TextRun,
+} from 'docx';
 import { saveAs } from 'file-saver';
 
 type RecipeWithParameters = Prisma.RecipeGetPayload<{
@@ -47,6 +53,25 @@ export const downloadAsDoc = async (
         spacing: { after: 300 },
       }),
     );
+
+    if (recipe.qrCodeUrl) {
+      paragraphs.push(
+        new Paragraph({
+          children: [
+            new ExternalHyperlink({
+              link: recipe.qrCodeUrl,
+              children: [
+                new TextRun({
+                  text: `QR код`,
+                  style: 'Hyperlink',
+                }),
+              ],
+            }),
+          ],
+          spacing: { after: 300 },
+        }),
+      );
+    }
 
     recipe.parameters?.forEach((param, i) => {
       paragraphs.push(
@@ -102,11 +127,7 @@ export const downloadAsDoc = async (
     });
 
     const doc = new Document({
-      sections: [
-        {
-          children: paragraphs,
-        },
-      ],
+      sections: [{ children: paragraphs }],
     });
 
     const blob = await Packer.toBlob(doc);

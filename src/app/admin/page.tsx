@@ -42,7 +42,7 @@ async function getDataTable(): Promise<
 export default async function Page() {
   const data = await getDataTable();
   return (
-    <div className="w-full px-10">
+    <div className="w-full px-4">
       <DataTable data={data} />
     </div>
   );

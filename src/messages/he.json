@@ -32,5 +32,6 @@
   "link": "קישור",
   "delete": "מחיקה",
   "filterClientName": "סינון לפי שם הלקוח",
-  "noResults": "אין תוצאות"
+  "noResults": "אין תוצאות",
+  "enterText": "הזן טקסט"
 }

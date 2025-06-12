@@ -3,12 +3,12 @@ import type { Prisma } from '@prisma/client';
 import Image from 'next/image';
 import { useLocale } from 'next-intl';
 
+import { ShareButton } from '@/components/share-button';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { downloadAsDoc } from '@/lib/documentGenerator';
-import { ShareButton } from '@/components/share-button';
 
 type RecipeWithParameters = Prisma.RecipeGetPayload<{
   include: {
@@ -61,9 +61,12 @@ export const Recipe: React.FC<{ recipe: RecipeWithParameters }> = ({
   const locale = useLocale();
   return (
     <div className="relative flex w-full flex-col justify-start gap-2 overflow-x-hidden rounded-md p-4">
-      <div className="absolute right-3 top-3">
-        <ShareButton url={recipe.qrCodeUrl} />
-      </div>
+      {recipe.qrCodeUrl && (
+        <div className="absolute right-3 top-3">
+          <ShareButton url={recipe.qrCodeUrl} />
+        </div>
+      )}
+
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="w-2/3 space-y-1 p-2">
           <h1 className="text-3xl font-bold">
@@ -88,6 +91,8 @@ export const Recipe: React.FC<{ recipe: RecipeWithParameters }> = ({
             {Intl.NumberFormat('he-HE', {
               style: 'currency',
               currency: 'ILS',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
             }).format(recipe.price ?? 0)}
           </p>
         </div>

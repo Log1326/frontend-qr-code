@@ -1,27 +1,7 @@
 'use client';
 
-import {
-  closestCenter,
-  DndContext,
-  type DragEndEvent,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  type UniqueIdentifier,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import type {
   ColumnFiltersState,
-  Row,
   SortingState,
   VisibilityState,
 } from '@tanstack/react-table';
@@ -44,7 +24,7 @@ import {
   ChevronsRightIcon,
   ColumnsIcon,
 } from 'lucide-react';
-import { useId, useMemo, useState } from 'react';
+import { useState } from 'react';
 import type { z } from 'zod';
 
 import { columns } from '@/components/data-table/constants';
@@ -78,37 +58,13 @@ import type { MessageKeys } from '@/hooks/useTypedTranslations';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { cn } from '@/lib/utils';
 
-function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
-  const { transform, transition, setNodeRef, isDragging } = useSortable({
-    id: row.original.id,
-  });
-
-  return (
-    <TableRow
-      data-state={row.getIsSelected() && 'selected'}
-      data-dragging={isDragging}
-      ref={setNodeRef}
-      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition: transition,
-      }}>
-      {row.getVisibleCells().map((cell) => (
-        <TableCell key={cell.id}>
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </TableCell>
-      ))}
-    </TableRow>
-  );
-}
-
 export function DataTable({
   data: initialData,
 }: {
   data: z.infer<typeof schema>[];
 }) {
   const t = useTypedTranslations();
-  const [data, setData] = useState(() => initialData);
+  const [data] = useState(() => initialData);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -117,17 +73,9 @@ export function DataTable({
     pageIndex: 0,
     pageSize: 10,
   });
-  const sortableId = useId();
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {}),
-  );
+  const [currentSortField, setCurrentSortField] =
+    useState<string>('employeeName');
 
-  const dataIds = useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ id }) => id) || [],
-    [data],
-  );
   const table = useReactTable({
     data,
     columns,
@@ -153,32 +101,53 @@ export function DataTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(data, oldIndex, newIndex);
-      });
+  function handleSortChange(value: string | null) {
+    setCurrentSortField(value ?? 'employeeName');
+    if (value) {
+      table.getColumn(value)?.setFilterValue('');
     }
   }
-
   return (
     <Tabs
       defaultValue="outline"
       className="flex w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
-        <Input
-          placeholder={t('filterClientName')}
-          value={
-            (table.getColumn('clientName')?.getFilterValue() as string) ?? ''
-          }
-          onChange={(event) =>
-            table.getColumn('clientName')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <div className="flex items-center gap-1">
+          <Input
+            placeholder={t(currentSortField as MessageKeys)}
+            value={
+              currentSortField
+                ? ((table
+                    .getColumn(currentSortField)
+                    ?.getFilterValue() as string) ?? '')
+                : ''
+            }
+            onChange={(event) => {
+              if (currentSortField) {
+                table
+                  .getColumn(currentSortField)
+                  ?.setFilterValue(event.target.value);
+              }
+            }}
+            disabled={!currentSortField}
+            className="max-w-sm"
+          />
+          <div className="flex items-center gap-2">
+            <Select
+              value={currentSortField}
+              onValueChange={(value) =>
+                handleSortChange(value || 'employeeName')
+              }>
+              <SelectTrigger>
+                <SelectValue placeholder={t('enterText')} />
+              </SelectTrigger>
+              <SelectContent side="bottom">
+                <SelectItem value="employeeName">{t('employee')}</SelectItem>
+                <SelectItem value="clientName">{t('clientName')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm">
@@ -212,92 +181,91 @@ export function DataTable({
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
-          <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis]}
-            onDragEnd={handleDragEnd}
-            sensors={sensors}
-            id={sortableId}>
-            <Table>
-              <TableHeader className="sticky top-0 z-10 bg-muted">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        onClick={
-                          header.column.getCanSort()
-                            ? header.column.getToggleSortingHandler()
-                            : undefined
-                        }
-                        className={cn('relative', {
-                          'cursor-pointer select-none':
-                            header.column.getCanSort(),
-                        })}>
-                        <div className="flex items-center gap-1 pr-2">
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                typeof header.column.columnDef.header ===
-                                  'string'
-                                  ? t(
-                                      header.column.columnDef
-                                        .header as MessageKeys,
-                                    )
-                                  : header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+          <Table>
+            <TableHeader className="sticky top-0 z-10 bg-muted">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      onClick={
+                        header.column.getCanSort()
+                          ? header.column.getToggleSortingHandler()
+                          : undefined
+                      }
+                      className={cn('relative', {
+                        'cursor-pointer select-none':
+                          header.column.getCanSort(),
+                      })}>
+                      <div className="flex items-center gap-1 pr-2">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              typeof header.column.columnDef.header === 'string'
+                                ? t(
+                                    header.column.columnDef
+                                      .header as MessageKeys,
+                                  )
+                                : header.column.columnDef.header,
+                              header.getContext(),
+                            )}
 
-                          {header.column.getCanSort() && (
-                            <ArrowUpWideNarrow
-                              style={{
-                                transition:
-                                  'transform 0.3s ease, opacity 0.3s ease',
-                                transform:
-                                  header.column.getIsSorted() === 'desc'
-                                    ? 'rotate(0deg)'
-                                    : header.column.getIsSorted() === 'asc'
-                                      ? 'rotate(180deg)'
-                                      : 'rotate(0deg)',
-                                opacity: header.column.getIsSorted() ? 1 : 0.3,
-                                color:
-                                  header.column.getIsSorted() === 'desc'
-                                    ? '#22c55e'
-                                    : header.column.getIsSorted() === 'asc'
-                                      ? '#ef4444'
-                                      : '#9ca3af',
-                              }}
-                              className="size-4"
-                            />
-                          )}
-                        </div>
-                      </TableHead>
+                        {header.column.getCanSort() && (
+                          <ArrowUpWideNarrow
+                            style={{
+                              transition:
+                                'transform 0.3s ease, opacity 0.3s ease',
+                              transform:
+                                header.column.getIsSorted() === 'desc'
+                                  ? 'rotate(0deg)'
+                                  : header.column.getIsSorted() === 'asc'
+                                    ? 'rotate(180deg)'
+                                    : 'rotate(0deg)',
+                              opacity: header.column.getIsSorted() ? 1 : 0.3,
+                              color:
+                                header.column.getIsSorted() === 'desc'
+                                  ? '#22c55e'
+                                  : header.column.getIsSorted() === 'asc'
+                                    ? '#ef4444'
+                                    : '#9ca3af',
+                            }}
+                            className="size-4"
+                          />
+                        )}
+                      </div>
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody className="**:data-[slot=table-cell]:first:w-8">
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
                     ))}
                   </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                {table.getRowModel().rows?.length ? (
-                  <SortableContext
-                    items={dataIds}
-                    strategy={verticalListSortingStrategy}>
-                    {table.getRowModel().rows.map((row) => (
-                      <DraggableRow key={row.id} row={row} />
-                    ))}
-                  </SortableContext>
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center">
-                      {t('noResults')}
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </DndContext>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center">
+                    {t('noResults')}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
         <div className="mx-auto flex px-4">
           <div className="flex w-full items-center gap-8 lg:w-fit">

@@ -1,6 +1,7 @@
 'use client';
 
-import { Trash } from 'lucide-react';
+import { CheckCheck, Folder, Trash } from 'lucide-react';
+import { useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -36,6 +37,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
   onRemove,
   onFileChange,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { control, register, setValue } = useFormContext();
   const type = useWatch({ control, name: `parameters[${index}][type]` });
   const t = useTypedTranslations();
@@ -47,7 +49,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
         render={({ field }) => (
           <FormItem className="w-full md:w-auto">
             <FormControl>
-              <Input {...field} placeholder="Name" />
+              <Input {...field} placeholder={t('edit')} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -64,14 +66,34 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
                 <Textarea
                   {...field}
                   className="min-h-[100px]"
-                  placeholder="Enter text..."
+                  placeholder={t('enterText')}
                 />
               ) : type === 'FILE' ? (
                 <div className="flex items-center gap-2">
-                  <Input type="file" onChange={onFileChange(index)} />
+                  <Input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    onChange={onFileChange(index)}
+                  />
+                  <Button
+                    variant="outline"
+                    type="button"
+                    className="mx-auto w-full"
+                    onClick={() => fileInputRef.current?.click()}>
+                    {fileInputRef.current?.files?.[0]?.name ? (
+                      <div className="flex items-center gap-2 text-green-400">
+                        <Folder />
+                        <p>{fileInputRef.current?.files?.[0]?.name}</p>
+                        <CheckCheck />
+                      </div>
+                    ) : (
+                      <Folder />
+                    )}
+                  </Button>
                 </div>
               ) : (
-                <Input {...field} placeholder="Enter text..." />
+                <Input {...field} placeholder={t('enterText')} />
               )}
             </FormControl>
             <FormMessage />
@@ -100,7 +122,7 @@ export const ParameterField: React.FC<ParameterFieldProps> = ({
                   value={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full md:w-[110px]">
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder={t('FILE')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>

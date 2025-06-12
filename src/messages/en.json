@@ -32,5 +32,6 @@
   "link": "Link",
   "delete": "Delete",
   "filterClientName": "Filter client name",
-  "noResults": "No results"
+  "noResults": "No results",
+  "enterText": "Enter text"
 }

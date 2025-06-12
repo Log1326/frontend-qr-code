@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import type { Path, SubmitHandler } from 'react-hook-form';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import useSWR from 'swr';
 import { z } from 'zod';
 
 import { ParameterField } from '@/components/form/parameter-field';
@@ -45,7 +46,11 @@ const parameterItemSchema = z.object({
 const formSchema = z.object({
   employee: z.string().min(1, 'Employee name is required'),
   clientName: z.string().min(1, 'Client name is required'),
-  price: z.number(),
+  price: z
+    .number()
+    .int('Price must be an integer')
+    .positive('Price must be greater than 0')
+    .lte(99999999, 'Price must be at most 8 digits'),
   status: z.enum(recipeStatuses),
   parameters: z.array(parameterItemSchema),
 });
@@ -53,9 +58,9 @@ const formSchema = z.object({
 type RecipeFormData = z.infer<typeof formSchema>;
 
 const DEFAULT_VALUES: RecipeFormData = {
-  employee: 'Антон Панов',
-  clientName: 'Петушок',
-  price: 1500,
+  employee: '',
+  clientName: '',
+  price: 0,
   status: RecipeStatus.NEW,
   parameters: [],
 };
@@ -89,6 +94,9 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
     control: form.control,
     name: 'parameters',
   });
+
+  const { data: employees, isLoading: isLoadingEmployeeName } =
+    useSWR<{ id: string; name: string }[]>('/api/employees');
 
   const onSubmit: SubmitHandler<RecipeFormData> = async (
     data: RecipeFormData,
@@ -167,7 +175,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full max-w-4xl flex-col gap-4 rounded-lg p-4 shadow-md ring-1 ring-gray-300 lg:w-1/2">
+          className="flex w-full max-w-4xl flex-col gap-4 rounded-lg p-4 lg:w-1/2">
           <FormField
             control={form.control}
             name="employee"
@@ -175,7 +183,22 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
               <FormItem>
                 <FormLabel>{t('employee')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Employee name" {...field} />
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isLoadingEmployeeName}>
+                    <SelectTrigger isLoading={isLoadingEmployeeName}>
+                      <SelectValue placeholder={t('employee')} />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {employees?.map((emp) => (
+                        <SelectItem key={emp.id} value={emp.id}>
+                          {emp.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -189,7 +212,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
               <FormItem>
                 <FormLabel>{t('clientName')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Client name" {...field} />
+                  <Input placeholder={t('clientName')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -212,23 +235,17 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
                       const raw = e.target.value.replace(/[^\d]/g, '');
                       setLocalPrice(e.target.value);
 
-                      if (raw === '') {
-                        field.onChange('');
-                      } else {
-                        field.onChange(Number(raw));
-                      }
+                      if (raw === '') field.onChange('');
+                      else field.onChange(Number(raw));
                     }}
                     onBlur={() => {
-                      if (field.value !== 0 && field.value != null) {
+                      if (field.value !== 0 && field.value != null)
                         setLocalPrice(formatter.format(Number(field.value)));
-                      } else {
-                        setLocalPrice('');
-                      }
+                      else setLocalPrice('');
                     }}
                     onFocus={() => {
-                      if (field.value !== 0 && field.value != null) {
+                      if (field.value !== 0 && field.value != null)
                         setLocalPrice(String(field.value));
-                      }
                     }}
                   />
                 </FormControl>
@@ -273,21 +290,19 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
             ))}
           </div>
 
-          {!isMobile && (
-            <Button
-              type="button"
-              className="w-full"
-              onClick={() =>
-                append({
-                  name: `Parameter ${fields.length + 1}`,
-                  type: FieldType.TEXT,
-                  description: '',
-                  order: fields.length,
-                })
-              }>
-              {t('addParameter')}
-            </Button>
-          )}
+          <Button
+            type="button"
+            className="w-full"
+            onClick={() =>
+              append({
+                name: ` ${fields.length + 1}`,
+                type: FieldType.TEXT,
+                description: '',
+                order: fields.length,
+              })
+            }>
+            {t('addParameter')}
+          </Button>
 
           <Button
             type="submit"
@@ -296,7 +311,8 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
             {form.formState.isSubmitting ? (
               <>
                 <p>
-                  Creating<span className="animate-ping">...</span>
+                  {t('creating')}
+                  <span className="animate-ping">...</span>
                 </p>
                 <Loader2 className="ml-2 h-4 w-4 animate-spin text-blue-400" />
               </>

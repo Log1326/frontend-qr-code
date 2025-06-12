@@ -9,7 +9,7 @@ export const SWRProvider: React.FC<PropsWithChildren> = ({ children }) => {
       value={{
         fetcher: (url: string) => fetch(url).then((res) => res.json()),
         shouldRetryOnError: false,
-        revalidateOnFocus: false,
+        revalidateOnFocus: true,
         dedupingInterval: 5000 * 60,
       }}>
       {children}

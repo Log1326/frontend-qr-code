@@ -1,45 +1,35 @@
 import { Share } from 'lucide-react';
-import type QRCodeStyling from 'qr-code-styling';
-
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface ShareButtonProps {
-  qrCode: QRCodeStyling | null;
   url: string;
 }
 
-export const ShareButton: React.FC<ShareButtonProps> = ({ qrCode, url }) => {
+export const ShareButton: React.FC<ShareButtonProps> = ({ url }) => {
   const isMobile = useIsMobile();
 
   const handleShare = async (): Promise<void> => {
-    if (!qrCode) return;
     try {
-      const blob = await qrCode.getRawData('png');
-      if (!blob) return;
-      const file = new File([blob], 'qrcode.png', { type: 'image/png' });
-      const filesArray = [file];
-      if (navigator.canShare && navigator.canShare({ files: filesArray })) {
+      if (navigator.share) {
         await navigator
           .share({
-            files: filesArray,
-            title: 'QR Code',
+            title: 'Ссылка',
             url,
           })
           .then(() => console.log('Share was successful.'))
           .catch((error) => console.log('Sharing failed', error));
-      }
+      } else console.warn('Web Share API is not supported in this browser');
     } catch (error) {
       console.error('Error sharing:', error);
     }
   };
 
-  if (isMobile) {
-    return (
-      <Button onClick={handleShare} variant="outline">
-        <Share />
-      </Button>
-    );
-  }
-  return null;
+  if (!isMobile) return null;
+
+  return (
+    <Button onClick={handleShare} variant="outline">
+      <Share className="h-4 w-4" />
+    </Button>
+  );
 };

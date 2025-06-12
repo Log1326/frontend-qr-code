@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { downloadAsDoc } from '@/lib/documentGenerator';
+import { ShareButton } from '@/components/share-button';
 
 type RecipeWithParameters = Prisma.RecipeGetPayload<{
   include: {
@@ -59,8 +60,11 @@ export const Recipe: React.FC<{ recipe: RecipeWithParameters }> = ({
   const t = useTypedTranslations();
   const locale = useLocale();
   return (
-    <div className="flex w-full flex-col justify-start rounded-md px-10">
-      <div className="flex items-center justify-between">
+    <div className="relative flex w-full flex-col justify-start gap-2 overflow-x-hidden rounded-md p-4">
+      <div className="absolute right-3 top-3">
+        <ShareButton url={recipe.qrCodeUrl} />
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="w-2/3 space-y-1 p-2">
           <h1 className="text-3xl font-bold">
             <span className="font-medium">{t('employeeName')}:</span>
@@ -88,7 +92,7 @@ export const Recipe: React.FC<{ recipe: RecipeWithParameters }> = ({
           </p>
         </div>
 
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2 border">
           <Button variant="secondary" onClick={() => downloadAsDoc(recipe)}>
             Download as DOC
           </Button>
@@ -107,13 +111,20 @@ export const Recipe: React.FC<{ recipe: RecipeWithParameters }> = ({
           </div>
         ))}
         {recipe.qrCodeUrl && (
-          <Image
-            src={recipe.qrCodeUrl}
-            alt="QR Code"
-            width={384}
-            height={384}
-            className="ring-gray-20 mx-auto max-w-sm rounded border"
-          />
+          <div className="mx-auto w-full max-w-sm">
+            <Image
+              src={recipe.qrCodeUrl}
+              alt="QR Code"
+              width={384}
+              height={384}
+              className="h-auto w-full rounded border ring-gray-200"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '384px',
+                height: 'auto',
+              }}
+            />
+          </div>
         )}
       </div>
     </div>

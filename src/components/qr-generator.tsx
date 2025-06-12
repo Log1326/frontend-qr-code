@@ -107,7 +107,7 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
       </div>
 
       <div className="absolute right-3 top-3">
-        <ShareButton qrCode={qrCode} url={data} />
+        <ShareButton url={data} />
       </div>
     </div>
   );

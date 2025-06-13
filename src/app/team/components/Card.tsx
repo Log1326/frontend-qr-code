@@ -1,9 +1,15 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { statusBorderColors, statusColors, statusTitles } from './constant';
-import { Parameter, Recipe } from '@prisma/client';
-import { cn } from '@/lib/utils';
+import type { Parameter, Recipe } from '@prisma/client';
+import Image from 'next/image';
+
+import {
+  statusBorderColors,
+  statusColors,
+  statusTitles,
+} from '@/app/team/components/constant';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
+import { cn } from '@/lib/utils';
 
 type RecipeWithParameters = Recipe & {
   parameters: Parameter[];
@@ -62,9 +68,11 @@ export const Card: React.FC<{ recipe: RecipeWithParameters }> = ({
             {statusTitles[recipe.status]}
           </span>
           {recipe.employee.avatarUrl ? (
-            <img
+            <Image
               src={recipe.employee.avatarUrl}
               alt={recipe.employee.name}
+              height={24}
+              width={24}
               className="h-6 w-6 rounded-full object-cover ring-1 ring-gray-300 dark:ring-gray-600"
             />
           ) : (

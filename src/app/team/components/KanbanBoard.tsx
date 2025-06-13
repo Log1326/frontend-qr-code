@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import {
   closestCorners,
   DndContext,
-  DragEndEvent,
   DragOverlay,
-  DragStartEvent,
   KeyboardSensor,
   MouseSensor,
   PointerSensor,
@@ -20,12 +18,15 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
-import { Recipe, RecipeStatus, Parameter } from '@prisma/client';
-import { statusColors, statusTitles } from './constant';
-import { Column } from './Column';
+import type { Parameter, Recipe } from '@prisma/client';
+import { RecipeStatus } from '@prisma/client';
+import React, { useEffect, useState } from 'react';
+import type { Socket } from 'socket.io-client';
 import useSWR, { useSWRConfig } from 'swr';
+
+import { Column } from '@/app/team/components/Column';
+import { statusColors, statusTitles } from '@/app/team/components/constant';
 import { cn } from '@/lib/utils';
-import { Socket } from 'socket.io-client';
 
 type RecipeWithParameters = Recipe & {
   parameters: Parameter[];
@@ -190,10 +191,10 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ socket }) => {
           ),
         );
 
-        await fetch(`/api/recipes/${active.id}/status`, {
+        await fetch(`/api/recipes/status`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: newStatus }),
+          body: JSON.stringify({ status: newStatus, id: active.id }),
         });
 
         socket.emit('recipe-updated', { id: active.id, status: newStatus });

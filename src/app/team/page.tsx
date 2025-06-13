@@ -2,13 +2,14 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import useSWR from 'swr';
 
 import { HeaderEmployees } from '@/app/team/components/HeaderEmployees';
-import { KanbanBoard } from './components/KanbanBoard';
-import useSWR from 'swr';
+import { KanbanBoard } from '@/app/team/components/KanbanBoard';
+import { MouseCursorOverlay } from '@/app/team/components/MouseCursorOverlay';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MouseCursorOverlay } from './components/MouseCursorOverlay';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SOCKET_SITE_URL ?? '';
 

@@ -1,6 +1,8 @@
+import type { RecipeStatus } from '@prisma/client';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { db } from '@/lib/prisma';
-import { RecipeStatus } from '@prisma/client';
-import { NextRequest, NextResponse } from 'next/server';
 
 export async function PATCH(req: NextRequest) {
   try {

@@ -1,14 +1,15 @@
 import { useDroppable } from '@dnd-kit/core';
-import { Parameter, Recipe, RecipeStatus } from '@prisma/client';
-import { statusColors, statusTitles } from './constant';
 import {
   SortableContext,
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { cn } from '@/lib/utils';
 import { CSS } from '@dnd-kit/utilities';
-import { Card } from './Card';
+import type { Parameter, Recipe, RecipeStatus } from '@prisma/client';
+
+import { Card } from '@/app/team/components/Card';
+import { statusColors, statusTitles } from '@/app/team/components/constant';
+import { cn } from '@/lib/utils';
 
 type RecipeWithParameters = Recipe & {
   parameters: Parameter[];

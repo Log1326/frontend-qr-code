@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { MousePointer2 } from 'lucide-react';
-import { Socket } from 'socket.io-client';
+import { useEffect, useRef, useState } from 'react';
+import type { Socket } from 'socket.io-client';
 
 interface Cursor {
   x: number;
@@ -79,7 +79,7 @@ export const MouseCursorOverlay: React.FC<MouseCursorOverlayProps> = ({
       setCursors((prev) =>
         Object.fromEntries(
           Object.entries(prev).filter(
-            ([id, cursor]) => now - cursor.lastSeen < 5000,
+            ([_id, cursor]) => now - cursor.lastSeen < 5000,
           ),
         ),
       );

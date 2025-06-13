@@ -1,18 +1,25 @@
-import { NextResponse } from 'next/server';
 import { RecipeStatus } from '@prisma/client';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+
 import { db } from '@/lib/prisma';
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
-  const id = params.id;
+export async function PATCH(req: NextRequest) {
   const body = await req.json();
+  const { id, status } = body;
 
-  const newStatus = body.status as RecipeStatus;
+  if (!id || typeof id !== 'string') {
+    return NextResponse.json(
+      { error: 'Missing or invalid recipe id' },
+      { status: 400 },
+    );
+  }
 
-  if (!Object.values(RecipeStatus).includes(newStatus))
+  const newStatus = status as RecipeStatus;
+
+  if (!Object.values(RecipeStatus).includes(newStatus)) {
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+  }
 
   try {
     const updated = await db.recipe.update({

@@ -8,7 +8,12 @@ import {
 const prisma = new PrismaClient();
 
 async function main() {
-  const employeeNames = ['Антон Панов', 'Елена Смирнова', 'Иван Кузнецов'];
+  const employeeNames = [
+    'Антон Панов',
+    'Константин Панов',
+    'Ольга Панова',
+    'Мия Панова',
+  ];
 
   const employees = await Promise.all(
     employeeNames.map((name) => {
@@ -16,8 +21,9 @@ async function main() {
 
       let avatarId = 'default';
       if (lowerName.includes('антон')) avatarId = 'anton';
-      else if (lowerName.includes('иван')) avatarId = 'ivan';
-      else if (lowerName.includes('елена')) avatarId = 'elena';
+      else if (lowerName.includes('константин')) avatarId = 'konstantin';
+      else if (lowerName.includes('ольга')) avatarId = 'olga';
+      else if (lowerName.includes('Мия')) avatarId = 'mia';
 
       return prisma.employee.create({
         data: {

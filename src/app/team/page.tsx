@@ -10,7 +10,7 @@ import useSWR from 'swr';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MouseCursorOverlay } from './components/MouseCursorOverlay';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
+const SITE_URL = process.env.NEXT_PUBLIC_SOCKET_SITE_URL ?? '';
 
 export default function TeamPage() {
   const searchParams = useSearchParams();

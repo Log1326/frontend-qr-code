@@ -40,7 +40,9 @@ export default function TeamPage() {
 
   useEffect(() => {
     if (!employeeId) return;
-    const socketIo = io(SITE_URL);
+    const socketIo = io(SITE_URL, {
+      transports: ['websocket'],
+    });
     setSocket(socketIo);
     socketIo.on('employees-updated', (updatedIds: string[]) => {
       const uniqueIds = Array.from(new Set(updatedIds));

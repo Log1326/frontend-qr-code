@@ -12,7 +12,7 @@
     "format": "prettier --write .",
     "seed": "npx tsx prisma/seed.ts",
     "socket:dev": "concurrently \"npx tsx socket-server.ts\" \"next dev --turbopack\"",
-    "socket": "npx tsx socket-server.ts && next dev --turbopack"
+    "socket": "npx tsx socket-server.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -40,6 +40,7 @@
     "clsx": "^2.1.1",
     "docx": "^9.5.0",
     "file-saver": "^2.0.5",
+    "framer-motion": "^12.18.0",
     "lucide-react": "^0.475.0",
     "next": "15.1.6",
     "next-intl": "^4.1.0",

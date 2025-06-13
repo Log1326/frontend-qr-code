@@ -33,5 +33,9 @@
   "delete": "Удалить",
   "filterClientName": "Фильтр по имени клиента",
   "noResults": "Нет результатов",
-  "enterText": "Введите текст"
+  "enterText": "Введите текст",
+  "connectedEmployees": "Подключенные сотрудники",
+  "onlineEmployees": "Сотрудников онлайн",
+  "calendar": "Календарь",
+  "payment": "Оплата"
 }

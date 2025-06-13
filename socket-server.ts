@@ -8,39 +8,40 @@ const io = new Server(httpServer, {
 
 interface ConnectedEmployee {
   socketId: string;
-  employeeName: string;
+  employeeId: string;
 }
 
 const connectedEmployees = new Map<string, ConnectedEmployee>();
 
 io.on('connection', (socket) => {
-  socket.on('join', ({ employeeName }) => {
-    connectedEmployees.set(socket.id, { socketId: socket.id, employeeName });
+  socket.on('join', ({ employeeId }) => {
+    if (typeof employeeId !== 'string' || !employeeId.trim())
+      return socket.disconnect();
+    connectedEmployees.set(socket.id, { socketId: socket.id, employeeId });
     socket.join('chat-room');
-    io.emit(
-      'employees-updated',
-      Array.from(connectedEmployees.values()).map((e) => e.employeeName),
+    const onlineIds = Array.from(connectedEmployees.values()).map(
+      (e) => e.employeeId,
     );
+    io.emit('employees-updated', onlineIds);
   });
 
-  socket.on('chat-message', (message) => {
-    const employee = connectedEmployees.get(socket.id);
-    if (!employee) return;
-    io.to('chat-room').emit('chat-message', {
-      employeeName: employee.employeeName,
-      message,
-      timestamp: new Date().toISOString(),
-    });
+  socket.on('recipe-updated', (data) => {
+    socket.broadcast.emit('recipe-updated', data);
+  });
+
+  socket.on('recipe-reordered', ({ status, recipes }) => {
+    socket.broadcast.emit('recipe-reordered', { status, recipes });
+  });
+  socket.on('mouse-move', ({ employeeId, x, y, name }) => {
+    socket.broadcast.emit('mouse-move', { employeeId, x, y, name });
   });
   socket.on('disconnect', () => {
-    const employee = connectedEmployees.get(socket.id);
-    if (employee) {
-      connectedEmployees.delete(socket.id);
-      io.emit(
-        'employees-updated',
-        Array.from(connectedEmployees.values()).map((e) => e.employeeName),
-      );
-    }
+    connectedEmployees.delete(socket.id);
+
+    const onlineIds = Array.from(connectedEmployees.values()).map(
+      (e) => e.employeeId,
+    );
+    io.emit('employees-updated', onlineIds);
   });
 });
 

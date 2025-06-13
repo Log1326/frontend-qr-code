@@ -33,5 +33,9 @@
   "delete": "Delete",
   "filterClientName": "Filter client name",
   "noResults": "No results",
-  "enterText": "Enter text"
+  "enterText": "Enter text",
+  "connectedEmployees": "Connected employees",
+  "onlineEmployees": "Employees online",
+  "calendar": "Calendar",
+  "payment": "Payment"
 }

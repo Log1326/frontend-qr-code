@@ -13,7 +13,11 @@ export async function POST(req: NextRequest) {
     const status = formData.get('status') as RecipeStatus;
     const priceRaw = formData.get('price') as string | null;
     const price = priceRaw ? parseFloat(priceRaw) : 0;
-
+    const max = await db.recipe.aggregate({
+      where: { status },
+      _max: { position: true },
+    });
+    const nextPosition = (max._max.position ?? -1) + 1;
     if (!employeeId || !clientName || !status) {
       return NextResponse.json(
         { error: 'Missing required fields' },
@@ -69,6 +73,7 @@ export async function POST(req: NextRequest) {
             id: employeeId,
           },
         },
+        position: nextPosition,
         clientName,
         status,
         price,
@@ -99,5 +104,48 @@ export async function POST(req: NextRequest) {
     );
   } finally {
     await db.$disconnect();
+  }
+}
+
+export async function GET() {
+  try {
+    const recipes = await db.recipe.findMany({
+      select: {
+        id: true,
+        status: true,
+        price: true,
+        clientName: true,
+        createdAt: true,
+        employee: {
+          select: {
+            name: true,
+            avatarUrl: true,
+          },
+        },
+        parameters: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            description: true,
+            order: true,
+          },
+          orderBy: {
+            order: 'asc',
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return NextResponse.json(recipes, { status: 200 });
+  } catch (error) {
+    console.error('Ошибка при получении рецептов:', error);
+    return NextResponse.json(
+      { error: 'Ошибка при получении рецептов' },
+      { status: 500 },
+    );
   }
 }

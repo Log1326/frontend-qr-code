@@ -3,7 +3,9 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   BarChartIcon,
+  Calendar,
   FolderIcon,
+  HandCoins,
   HelpCircleIcon,
   LayoutDashboardIcon,
   SearchIcon,
@@ -42,6 +44,8 @@ const data: {
     { title: 'analytics', url: '/analytics', icon: BarChartIcon },
     { title: 'projects', url: '/folders', icon: FolderIcon },
     { title: 'team', url: '/team', icon: UsersIcon },
+    { title: 'calendar', url: '/calendar', icon: Calendar },
+    { title: 'payment', url: '/payment', icon: HandCoins },
   ],
   navSecondary: [
     { title: 'settings', url: '/settings', icon: SettingsIcon },

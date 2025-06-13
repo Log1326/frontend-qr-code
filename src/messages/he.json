@@ -33,5 +33,9 @@
   "delete": "מחיקה",
   "filterClientName": "סינון לפי שם הלקוח",
   "noResults": "אין תוצאות",
-  "enterText": "הזן טקסט"
+  "enterText": "הזן טקסט",
+  "connectedEmployees": "עובדים מחוברים",
+  "onlineEmployees": "עובדים מחוברים",
+  "calendar": "לוח שנה",
+  "payment": "תשלום"
 }

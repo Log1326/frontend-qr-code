@@ -103,9 +103,7 @@ export function DataTable({
 
   function handleSortChange(value: string | null) {
     setCurrentSortField(value ?? 'employeeName');
-    if (value) {
-      table.getColumn(value)?.setFilterValue('');
-    }
+    if (value) table.getColumn(value)?.setFilterValue('');
   }
   return (
     <Tabs

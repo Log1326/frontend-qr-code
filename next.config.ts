@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'wjrxb4aenfqqvyu7.public.blob.vercel-storage.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.pravatar.cc',
+      },
     ],
   },
 };

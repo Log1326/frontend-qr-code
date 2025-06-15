@@ -86,8 +86,8 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
         <Image
           src={qrUrl}
           alt="QR Code"
-          width={384}
-          height={384}
+          width={375}
+          height={375}
           className="ring-gray-20 max-w-sm rounded border"
         />
       ) : (

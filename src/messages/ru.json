@@ -37,5 +37,9 @@
   "connectedEmployees": "Подключенные сотрудники",
   "onlineEmployees": "Сотрудников онлайн",
   "calendar": "Календарь",
-  "payment": "Оплата"
+  "payment": "Оплата",
+  "time": "Время",
+  "page": "Страница",
+  "of": "из",
+  "rowsPerPage": "Строк на странице"
 }

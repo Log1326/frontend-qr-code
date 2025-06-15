@@ -30,6 +30,7 @@ import {
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { getOrigin } from '@/lib/getOrigin';
+import { numberFormat } from '@/lib/utils';
 
 const recipeStatuses = Object.values(RecipeStatus) as [
   RecipeStatus,
@@ -74,14 +75,8 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
   onQRCodeGenerated,
   setRecipeId,
 }) => {
-  const formatter = new Intl.NumberFormat('he-IL', {
-    style: 'currency',
-    currency: 'ILS',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  });
   const [localPrice, setLocalPrice] = useState(
-    DEFAULT_VALUES.price ? formatter.format(DEFAULT_VALUES.price) : '',
+    DEFAULT_VALUES.price ? numberFormat(DEFAULT_VALUES.price) : '',
   );
   const t = useTypedTranslations();
   const isMobile = useIsMobile();
@@ -240,7 +235,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
                     }}
                     onBlur={() => {
                       if (field.value !== 0 && field.value != null)
-                        setLocalPrice(formatter.format(Number(field.value)));
+                        setLocalPrice(numberFormat(field.value));
                       else setLocalPrice('');
                     }}
                     onFocus={() => {

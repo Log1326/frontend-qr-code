@@ -1,6 +1,5 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import type { Socket } from 'socket.io-client';
 import { io } from 'socket.io-client';
@@ -14,18 +13,15 @@ import { Skeleton } from '@/components/ui/skeleton';
 const SITE_URL = process.env.NEXT_PUBLIC_SOCKET_SITE_URL ?? '';
 
 export default function TeamPage() {
-  const searchParams = useSearchParams();
-  const employeeId = searchParams.get('employeeId');
+  const { data: employees } =
+    useSWR<{ id: string; name: string }[]>('/api/employees');
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connectedEmployeeIds, setConnectedEmployeeIds] = useState<string[]>(
     [],
   );
+  const [employeeId, setEmployeeId] = useState<string | null>(null);
 
-  const {
-    data,
-    error,
-    isLoading: isLoadingEmployees,
-  } = useSWR<
+  const { data, error, isLoading } = useSWR<
     {
       name: string;
       id: string;
@@ -36,7 +32,18 @@ export default function TeamPage() {
       : null,
   );
 
-  const isLoading = !error && !data;
+  useEffect(() => {
+    if (!employees) return;
+    if (employeeId) return;
+    const unusedEmployee = employees.find(
+      (e) => !connectedEmployeeIds.includes(e.id),
+    );
+    if (unusedEmployee) {
+      setEmployeeId(unusedEmployee.id);
+    } else {
+      setEmployeeId(employees[0]?.id ?? null);
+    }
+  }, [employees, connectedEmployeeIds]);
 
   useEffect(() => {
     if (!employeeId) return;
@@ -55,6 +62,7 @@ export default function TeamPage() {
       socketIo.disconnect();
     };
   }, [employeeId]);
+
   const employeeMap = useMemo(() => {
     const map: Record<string, string> = {};
     data?.forEach(({ id, name }) => {
@@ -62,6 +70,7 @@ export default function TeamPage() {
     });
     return map;
   }, [data]);
+
   if (!employeeId) return <div>ID сотрудника не указан</div>;
 
   if (error) return <div>Ошибка загрузки данных</div>;
@@ -77,7 +86,7 @@ export default function TeamPage() {
           employeeMap={employeeMap}
         />
       )}
-      {isLoadingEmployees ? (
+      {isLoading ? (
         <div className="flex flex-col gap-1">
           <Skeleton className="h-6 w-40" />
           <Skeleton className="h-6 w-40" />

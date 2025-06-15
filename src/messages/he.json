@@ -37,5 +37,9 @@
   "connectedEmployees": "עובדים מחוברים",
   "onlineEmployees": "עובדים מחוברים",
   "calendar": "לוח שנה",
-  "payment": "תשלום"
+  "payment": "תשלום",
+  "time": "זמן",
+  "page": "עמוד",
+  "of": "מתוך",
+  "rowsPerPage": "שורות בעמוד"
 }

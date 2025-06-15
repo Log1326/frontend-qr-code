@@ -19,7 +19,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import type { MessageKeys } from '@/hooks/useTypedTranslations';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
+import { formattedDate, numberFormat } from '@/lib/utils';
 
 export const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
@@ -48,18 +50,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: 'status',
     header: 'status',
     enableSorting: true,
-    cell: ({ row }) => (
-      <div className="flex w-fit items-center gap-1 text-center text-muted-foreground [&_svg]:size-3">
-        {row.original.status === 'COMPLETED' ? (
-          <CheckCircle2Icon className="text-green-500 dark:text-green-400" />
-        ) : row.original.status === 'NEW' ? (
-          <OctagonAlert />
-        ) : (
-          <LoaderIcon className="animate-spin" />
-        )}
-        {row.original.status}
-      </div>
-    ),
+    cell: ({ row }) => <StatusCell status={row.original.status} />,
   },
   {
     accessorKey: 'price',
@@ -67,11 +58,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     enableSorting: true,
     cell: ({ row }) => (
       <div className="flex w-fit items-center gap-1 text-center text-muted-foreground [&_svg]:size-3">
-        {new Intl.NumberFormat('he-IL', {
-          style: 'currency',
-          currency: 'ILS',
-          maximumFractionDigits: 0,
-        }).format(Number(row.original.price) ?? 0)}
+        {numberFormat(row.original.price) ?? 0}
       </div>
     ),
   },
@@ -90,9 +77,7 @@ const CreatedAtCell: React.FC<{ date: string }> = ({ date }) => {
   const locale = useLocale();
   return (
     <div className="flex w-fit gap-1 text-muted-foreground [&_svg]:size-3">
-      {new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(
-        new Date(date),
-      )}
+      {formattedDate({ date, locale })}
     </div>
   );
 };
@@ -121,5 +106,21 @@ const ActionsCell: React.FC<{ id: string }> = ({ id }) => {
         <DropdownMenuItem>{t('delete')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+};
+
+const StatusCell: React.FC<{ status: string }> = ({ status }) => {
+  const t = useTypedTranslations();
+  return (
+    <div className="flex w-fit items-center gap-1 text-center text-muted-foreground [&_svg]:size-3">
+      {status === 'COMPLETED' ? (
+        <CheckCircle2Icon className="text-green-500 dark:text-green-400" />
+      ) : status === 'NEW' ? (
+        <OctagonAlert />
+      ) : (
+        <LoaderIcon className="animate-spin" />
+      )}
+      {t(status as MessageKeys)}
+    </div>
   );
 };

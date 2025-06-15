@@ -13,7 +13,6 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   horizontalListSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
@@ -22,7 +21,7 @@ import type { Parameter, Recipe } from '@prisma/client';
 import { RecipeStatus } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
 import type { Socket } from 'socket.io-client';
-import useSWR, { useSWRConfig } from 'swr';
+import useSWR from 'swr';
 
 import { Column } from '@/app/team/components/Column';
 import { statusColors, statusTitles } from '@/app/team/components/constant';
@@ -48,11 +47,8 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ socket }) => {
   } = useSWR<RecipeWithParameters[]>('/api/recipes');
 
   const [recipes, setRecipes] = useState<RecipeWithParameters[]>([]);
-  const [columnOrder, setColumnOrder] = useState<RecipeStatus[]>(
-    Object.values(RecipeStatus),
-  );
+  const [columnOrder] = useState<RecipeStatus[]>(Object.values(RecipeStatus));
   const [activeId, setActiveId] = useState<string | null>(null);
-  const { mutate } = useSWRConfig();
 
   useEffect(() => {
     if (initialData) setRecipes(initialData);
@@ -122,86 +118,93 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ socket }) => {
 
     const activeData = active.data.current;
     const overData = over.data.current;
+    const recipe = recipes.find((r) => r.id === active.id);
+
+    if (!recipe) return;
 
     if (activeData?.type === 'column' && overData?.type === 'column') {
-      const oldIndex = columnOrder.indexOf(active.id as RecipeStatus);
-      const newIndex = columnOrder.indexOf(over.id as RecipeStatus);
-
-      if (oldIndex !== -1 && newIndex !== -1)
-        setColumnOrder(arrayMove(columnOrder, oldIndex, newIndex));
-
       return;
     }
 
     if (activeData?.type === 'card') {
-      let newStatus: RecipeStatus | null = null;
+      const sourceColumn = recipe.status;
+      let targetColumn = sourceColumn;
 
-      if (overData?.type === 'column') newStatus = overData.columnId;
-      else if (overData?.type === 'card') newStatus = overData.columnId;
+      if (overData?.type === 'column') {
+        targetColumn = overData.columnId;
+      } else if (overData?.type === 'card') {
+        targetColumn = overData.columnId;
+      }
 
-      const recipe = recipes.find((r) => r.id === active.id);
-      if (!recipe) return;
+      const updatedRecipes = [...recipes];
+      const movedRecipeIndex = updatedRecipes.findIndex(
+        (r) => r.id === active.id,
+      );
 
-      if (!newStatus || recipe.status === newStatus) {
-        const columnRecipes = recipes
-          .filter((r) => r.status === recipe.status)
-          .sort((a, b) => a.position - b.position);
+      if (sourceColumn !== targetColumn) {
+        updatedRecipes[movedRecipeIndex] = {
+          ...updatedRecipes[movedRecipeIndex],
+          status: targetColumn as RecipeStatus,
+        };
+      }
 
-        const oldIndex = columnRecipes.findIndex((r) => r.id === active.id);
-        const newIndex = columnRecipes.findIndex((r) => r.id === over.id);
+      const columnRecipes = updatedRecipes
+        .filter((r) => r.status === targetColumn)
+        .sort((a, b) => a.position - b.position);
 
-        if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-          const reordered = arrayMove(columnRecipes, oldIndex, newIndex);
+      const filteredColumn = columnRecipes.filter((r) => r.id !== active.id);
 
-          const updated = reordered.map((r, index) => ({
-            ...r,
-            position: index,
-          }));
-          const others = recipes.filter((r) => r.status !== recipe.status);
-          setRecipes([...others, ...updated]);
+      let targetIndex = filteredColumn.length;
+      if (overData?.type === 'card' && overData.columnId === targetColumn) {
+        targetIndex = filteredColumn.findIndex((r) => r.id === over.id);
+      }
 
-          const reorderedPayload = reordered.map((r, index) => ({
-            id: r.id,
-            position: index,
-          }));
+      const movedRecipe = updatedRecipes[movedRecipeIndex];
+      filteredColumn.splice(targetIndex, 0, movedRecipe);
 
+      const reordered = filteredColumn.map((r, index) => ({
+        ...r,
+        position: index,
+      }));
+
+      const finalRecipes = [
+        ...updatedRecipes.filter((r) => r.status !== targetColumn),
+        ...reordered,
+      ];
+
+      setRecipes(finalRecipes);
+
+      try {
+        const changedRecipes = reordered.filter((r) => {
+          const original = recipes.find((or) => or.id === r.id);
+          return (
+            !original ||
+            original.position !== r.position ||
+            original.status !== r.status
+          );
+        });
+
+        if (changedRecipes.length > 0) {
           await fetch(`/api/recipes/reorder`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              status: recipe.status,
-              recipes: reorderedPayload,
+              status: targetColumn,
+              recipes: changedRecipes.map((r) => ({
+                id: r.id,
+                position: r.position,
+              })),
             }),
           });
 
           socket.emit('recipe-reordered', {
-            status: recipe.status,
-            recipes: reorderedPayload.map((r) => r.id),
+            status: targetColumn,
+            recipes: changedRecipes.map((r) => r.id),
           });
         }
-
-        return;
-      }
-
-      const original = [...recipes];
-      try {
-        setRecipes((prev) =>
-          prev.map((r) =>
-            r.id === active.id ? { ...r, status: newStatus! } : r,
-          ),
-        );
-
-        await fetch(`/api/recipes/status`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: newStatus, id: active.id }),
-        });
-
-        socket.emit('recipe-updated', { id: active.id, status: newStatus });
-        mutate('/api/recipes');
       } catch (error) {
-        console.error('Ошибка при обновлении статуса:', error);
-        setRecipes(original);
+        setRecipes(recipes);
+        console.error('Update failed:', error);
       }
     }
   };

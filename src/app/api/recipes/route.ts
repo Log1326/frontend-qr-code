@@ -116,6 +116,7 @@ export async function GET() {
         price: true,
         clientName: true,
         createdAt: true,
+        position: true,
         employee: {
           select: {
             name: true,
@@ -136,7 +137,7 @@ export async function GET() {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        position: 'asc',
       },
     });
 

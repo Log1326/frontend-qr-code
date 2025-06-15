@@ -3,12 +3,12 @@ import type { Prisma } from '@prisma/client';
 import Image from 'next/image';
 import { useLocale } from 'next-intl';
 
+import { renderers } from '@/app/recipes/[id]/components/Renderers';
 import { ShareButton } from '@/components/share-button';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { downloadAsDoc } from '@/lib/documentGenerator';
+import { formattedDate, numberFormat } from '@/lib/utils';
 
 type RecipeWithParameters = Prisma.RecipeGetPayload<{
   include: {
@@ -20,39 +20,6 @@ type RecipeWithParameters = Prisma.RecipeGetPayload<{
     parameters: true;
   };
 }>;
-
-const renderers = {
-  TEXT: (value: string) => <span>{value}</span>,
-  AREA: (value: string) => (
-    <div className="whitespace-pre-wrap break-words">{value}</div>
-  ),
-  FILE: (value: string) => (
-    <Dialog>
-      <DialogTrigger asChild>
-        <AspectRatio ratio={16 / 9} className="relaitve bg-muted">
-          <Image
-            src={value}
-            alt="Uploaded content"
-            fill
-            className="mx-auto"
-            priority
-          />
-        </AspectRatio>
-      </DialogTrigger>
-      <DialogContent className="h-full w-full">
-        <AspectRatio ratio={16 / 9} className="relative bg-muted">
-          <Image
-            src={value}
-            alt="Uploaded content"
-            fill
-            className="mx-auto p-3"
-            priority
-          />
-        </AspectRatio>
-      </DialogContent>
-    </Dialog>
-  ),
-};
 
 export const Recipe: React.FC<{ recipe: RecipeWithParameters }> = ({
   recipe,
@@ -74,9 +41,7 @@ export const Recipe: React.FC<{ recipe: RecipeWithParameters }> = ({
             {recipe.employee.name}
           </h1>
           <p className="text-sm">
-            {new Intl.DateTimeFormat(locale, {
-              dateStyle: 'medium',
-            }).format(new Date(recipe.createdAt))}
+            {formattedDate({ date: recipe.createdAt, locale })}
           </p>
           <p className="text-sm">
             <span className="font-medium">{t('clientName')}:&nbsp;</span>
@@ -88,12 +53,7 @@ export const Recipe: React.FC<{ recipe: RecipeWithParameters }> = ({
           </p>
           <p className="text-sm">
             <span className="font-medium">{t('price')}:&nbsp;</span>
-            {Intl.NumberFormat('he-HE', {
-              style: 'currency',
-              currency: 'ILS',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(recipe.price ?? 0)}
+            {numberFormat(recipe.price ?? 0)}
           </p>
         </div>
 
@@ -120,12 +80,12 @@ export const Recipe: React.FC<{ recipe: RecipeWithParameters }> = ({
             <Image
               src={recipe.qrCodeUrl}
               alt="QR Code"
-              width={384}
-              height={384}
+              width={375}
+              height={375}
               className="h-auto w-full rounded border ring-gray-200"
               style={{
                 maxWidth: '100%',
-                maxHeight: '384px',
+                maxHeight: '375px',
                 height: 'auto',
               }}
             />

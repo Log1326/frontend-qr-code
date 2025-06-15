@@ -29,7 +29,8 @@ export function NavMain({
   const linkBaseClass =
     'flex items-center gap-2 min-w-8 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 ease-linear';
 
-  const activeClass = 'bg-primary text-primary-foreground hover:bg-primary/90';
+  const activeClass =
+    'bg-blue-600 text-white shadow hover:bg-blue-700 active:bg-blue-800 focus-visible:ring-2 focus-visible:ring-blue-300';
   const inactiveClass =
     'text-muted-foreground hover:bg-muted hover:text-foreground';
 

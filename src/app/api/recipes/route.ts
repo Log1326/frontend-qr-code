@@ -13,6 +13,19 @@ export async function POST(req: NextRequest) {
     const status = formData.get('status') as RecipeStatus;
     const priceRaw = formData.get('price') as string | null;
     const price = priceRaw ? parseFloat(priceRaw) : 0;
+
+    const latitudeRaw = formData.get('latitude') as string | null;
+    const longitudeRaw = formData.get('longitude') as string | null;
+    const locationLat = latitudeRaw ? parseFloat(latitudeRaw) : null;
+    const locationLng = longitudeRaw ? parseFloat(longitudeRaw) : null;
+    const address = formData.get('address')?.toString().trim() ?? null;
+
+    if (!address) {
+      return NextResponse.json(
+        { error: 'Address is required' },
+        { status: 400 },
+      );
+    }
     const max = await db.recipe.aggregate({
       where: { status },
       _max: { position: true },
@@ -73,10 +86,13 @@ export async function POST(req: NextRequest) {
             id: employeeId,
           },
         },
+        address,
         position: nextPosition,
         clientName,
         status,
         price,
+        locationLat,
+        locationLng,
         parameters: {
           createMany: {
             data: parameters,

@@ -21,6 +21,9 @@ model Recipe {
   events      RecipeEvent[]                              // История действий над заказом
   position    Int            @default(0)                  // Позиция в колонке (Kanban)
   qrCodeUrl   String?                                    // URL на сохранённый QR-код (если есть)
+  address      String
+  locationLat  Float?
+  locationLng  Float?
   createdAt   DateTime       @default(now())              // Время создания заказа
   @@unique([status, position]) // Уникальная позиция в рамках одной колонки
 }

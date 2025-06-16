@@ -41,5 +41,7 @@
   "time": "Time",
   "page": "Page",
   "of": "of",
-  "rowsPerPage": "Rows per page"
+  "rowsPerPage": "Rows per page",
+  "address": "Address",
+  "map": "Map"
 }

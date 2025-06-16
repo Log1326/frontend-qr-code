@@ -40,11 +40,8 @@ export function NavMain({
         <SidebarMenu>
           <SidebarMenuItem>
             <Link
-              href="/"
-              className={cn(
-                linkBaseClass,
-                pathname === '/' ? activeClass : inactiveClass,
-              )}>
+              href="https://t.me/qrcode1841bot?start=1"
+              className={cn(linkBaseClass)}>
               <PlusCircleIcon className="mr-2 h-4 w-4" />
               {t('quickCreate')}
             </Link>

@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldType, RecipeStatus } from '@prisma/client';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import type { Path, SubmitHandler } from 'react-hook-form';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/select';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
+import { fetchAddressAndCoordinates } from '@/lib/fetchAddressAndCoordinates';
 import { getOrigin } from '@/lib/getOrigin';
 import { numberFormat } from '@/lib/utils';
 
@@ -52,6 +53,7 @@ const formSchema = z.object({
     .int('Price must be an integer')
     .positive('Price must be greater than 0')
     .lte(99999999, 'Price must be at most 8 digits'),
+  address: z.string().min(1, 'address is required'),
   status: z.enum(recipeStatuses),
   parameters: z.array(parameterItemSchema),
 });
@@ -62,6 +64,7 @@ const DEFAULT_VALUES: RecipeFormData = {
   employee: '',
   clientName: '',
   price: 0,
+  address: 'Netanya, Ha rav kuk ,61',
   status: RecipeStatus.NEW,
   parameters: [],
 };
@@ -78,6 +81,10 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
   const [localPrice, setLocalPrice] = useState(
     DEFAULT_VALUES.price ? numberFormat(DEFAULT_VALUES.price) : '',
   );
+  const [coordinates, setCoordinates] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const t = useTypedTranslations();
   const isMobile = useIsMobile();
   const form = useForm<RecipeFormData>({
@@ -101,6 +108,11 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
       formData.append('employee', data.employee);
       formData.append('clientName', data.clientName);
       formData.append('status', data.status);
+      formData.append('address', data.address);
+      if (coordinates) {
+        formData.append('latitude', coordinates.lat.toString());
+        formData.append('longitude', coordinates.lng.toString());
+      }
       if (data.price) formData.append('price', data.price.toString());
       for (let index = 0; index < data.parameters.length; index++) {
         const param = data.parameters[index];
@@ -164,7 +176,43 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
         file?.name || '',
       );
     };
+  const validateAddress = async (val: string) => {
+    if (!val.trim()) {
+      form.setError('address', {
+        type: 'manual',
+        message: 'Адрес обязателен',
+      });
+      setCoordinates(null);
+      return false;
+    }
 
+    const res = await fetchAddressAndCoordinates(val);
+    if (res) {
+      form.setValue('address', res.displayName, {
+        shouldValidate: true,
+      });
+      setCoordinates({ lat: res.lat, lng: res.lon });
+      form.clearErrors('address');
+      return true;
+    } else {
+      form.setError('address', {
+        type: 'manual',
+        message:
+          'Адрес не найден или неверный формат. Пример: "Тель-Авив, Дизенгоф 100"',
+      });
+      setCoordinates(null);
+      return false;
+    }
+  };
+
+  const handleAddressBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    await validateAddress(val);
+  };
+
+  const handleIconClick = async () => {
+    await validateAddress(form.getValues('address'));
+  };
   return (
     <FormProvider {...form}>
       <Form {...form}>
@@ -213,7 +261,34 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
               </FormItem>
             )}
           />
-
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel>{t('address')}</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      placeholder={t('address')}
+                      {...field}
+                      onBlur={handleAddressBlur}
+                      className="pr-10"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-2 top-1/2 -translate-y-1/2"
+                      onClick={handleIconClick}>
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                  </div>
+                </FormControl>
+                <FormMessage>{fieldState.error?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="price"

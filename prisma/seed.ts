@@ -9,6 +9,12 @@ function getRandomDateInRange(start: Date, end: Date): Date {
   return new Date(start.getTime() + newDiff);
 }
 
+function getRandomCoordinates() {
+  const lat = 29 + Math.random() * 4; // 29 - 33
+  const lng = 34 + Math.random() * 4; // 34 - 38
+  return { lat, lng };
+}
+
 async function main() {
   const employeeNames = [
     'Антон Панов',
@@ -48,6 +54,14 @@ async function main() {
   const startDate = new Date(2025, 4, 1); // 1 мая 2025 (месяцы с 0)
   const endDate = new Date(2025, 11, 31); // 31 декабря 2025
 
+  const sampleAddresses = [
+    'Tel Aviv, Rothschild Blvd 10',
+    'Jerusalem, Jaffa Street 50',
+    'Haifa, Hativat Hagalil 15',
+    'Beer Sheva, Ben Gurion Blvd 7',
+    'Eilat, Coral Beach Road 1',
+  ];
+
   for (const employee of employees) {
     console.log(`\n👤 Создаём заказы для сотрудника: ${employee.name}`);
 
@@ -67,6 +81,9 @@ async function main() {
       const nextPosition = (max._max?.position ?? -1) + 1;
 
       const randomCreatedAt = getRandomDateInRange(startDate, endDate);
+      const randomAddress =
+        sampleAddresses[Math.floor(Math.random() * sampleAddresses.length)];
+      const { lat, lng } = getRandomCoordinates();
 
       const recipe = await prisma.recipe.create({
         data: {
@@ -77,6 +94,9 @@ async function main() {
           position: nextPosition,
           qrCodeUrl: null,
           createdAt: randomCreatedAt,
+          address: randomAddress,
+          locationLat: lat,
+          locationLng: lng,
           parameters: {
             create: [
               {
@@ -115,7 +135,7 @@ async function main() {
       });
 
       console.log(
-        `📝 Заказ ${recipe.id} (${recipe.clientName}) → статус "${status}", позиция ${nextPosition}, дата ${randomCreatedAt.toISOString()}`,
+        `📝 Заказ ${recipe.id} (${recipe.clientName}) → статус "${status}", позиция ${nextPosition}, дата ${randomCreatedAt.toISOString()}, адрес "${randomAddress}"`,
       );
     }
   }

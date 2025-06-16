@@ -48,6 +48,7 @@ export default function TeamPage() {
   useEffect(() => {
     if (!employeeId) return;
     const socketIo = io(SITE_URL, {
+      path: '/socket',
       transports: ['websocket'],
     });
     setSocket(socketIo);

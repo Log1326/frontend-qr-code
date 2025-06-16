@@ -8,6 +8,7 @@ import {
   HandCoins,
   HelpCircleIcon,
   LayoutDashboardIcon,
+  MapPin,
   SearchIcon,
   SettingsIcon,
   UsersIcon,
@@ -46,6 +47,7 @@ const data: {
     { title: 'team', url: '/team', icon: UsersIcon },
     { title: 'calendar', url: '/calendar', icon: Calendar },
     { title: 'payment', url: '/payment', icon: HandCoins },
+    { title: 'map', url: '/map', icon: MapPin },
   ],
   navSecondary: [
     { title: 'settings', url: '/settings', icon: SettingsIcon },

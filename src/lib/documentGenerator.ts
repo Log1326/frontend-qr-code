@@ -1,4 +1,3 @@
-import type { Prisma } from '@prisma/client';
 import {
   Document,
   ExternalHyperlink,
@@ -9,20 +8,9 @@ import {
 } from 'docx';
 import { saveAs } from 'file-saver';
 
-type RecipeWithParameters = Prisma.RecipeGetPayload<{
-  include: {
-    employee: {
-      select: {
-        name: true;
-      };
-    };
-    parameters: true;
-  };
-}>;
+import type { Recipe } from '@/services/types/Recipe';
 
-export const downloadAsDoc = async (
-  recipe: RecipeWithParameters,
-): Promise<void> => {
+export const downloadAsDoc = async (recipe: Recipe): Promise<void> => {
   try {
     const paragraphs: Paragraph[] = [];
 

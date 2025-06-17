@@ -7,8 +7,8 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { SiteHeader } from '@/components/site-header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { getLocale } from '@/i18n/locale';
-import { Providers } from '@/providers';
-import { I18nProvider } from '@/providers/i18nProvider';
+import { Providers } from '@/providers/client';
+import { I18nProvider } from '@/providers/server/i18nProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

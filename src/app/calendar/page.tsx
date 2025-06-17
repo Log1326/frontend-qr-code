@@ -1,6 +1,4 @@
-import type { Employee, Recipe } from '@prisma/client';
-
-import { db } from '@/lib/prisma';
+import { recipeService } from '@/services/recipes';
 import {
   CalendarBody,
   CalendarDate,
@@ -12,34 +10,8 @@ import {
   CalendarYearPicker,
 } from '@/widgets/calendar';
 
-type RecipeWithEmployee = Recipe & { employee: Employee };
-
-const getInfo = async (): Promise<[RecipeWithEmployee[], Employee[]]> => {
-  try {
-    const recipes = await db.recipe.findMany({
-      include: {
-        employee: true,
-      },
-      orderBy: {
-        createdAt: 'asc',
-      },
-    });
-
-    const employees = await db.employee.findMany({
-      orderBy: {
-        name: 'asc',
-      },
-    });
-
-    return [recipes, employees];
-  } catch (err) {
-    console.error('CalendarPage:', err);
-    return [[], []];
-  }
-};
-
 export default async function CalendarPage() {
-  const [recipes, employees] = await getInfo();
+  const [recipes, employees] = await recipeService.getInfo();
   return (
     <div className="w-full p-4">
       <CalendarProvider startDay={0}>

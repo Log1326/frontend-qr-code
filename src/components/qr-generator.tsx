@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { ShareButton } from '@/components/share-button';
 import { Button } from '@/components/ui/button';
 import { useQRCode } from '@/hooks/useQRCode';
+import { localFetch } from '@/services/utils/localFetch';
 
 interface QRGeneratorProps {
   data: string | null;
@@ -46,17 +47,13 @@ export const QRGenerator: React.FC<QRGeneratorProps> = ({ data, recipeId }) => {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('recipeId', recipeId);
-        const res = await fetch('/api/upload', {
+        const result = await localFetch<{ url: string }>('/upload', {
           method: 'POST',
           body: formData,
         });
 
-        const result = await res.json();
-        if (result?.url) {
-          setQrUrl(result.url);
-        } else {
-          throw new Error('No URL returned from upload');
-        }
+        if (result?.url) setQrUrl(result.url);
+        else throw new Error('No URL returned from upload');
       } catch (error) {
         console.error('Upload failed:', error);
         setQrUrl(null);

@@ -1,4 +1,4 @@
-import { RecipeStatus } from '@prisma/client';
+import { RecipeStatus } from '@/services/types/enums';
 
 export const statusTitles: Record<RecipeStatus, string> = {
   [RecipeStatus.NEW]: 'Новые',

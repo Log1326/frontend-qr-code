@@ -2,33 +2,12 @@
 
 import 'leaflet/dist/leaflet.css';
 
-import type { Prisma } from '@prisma/client';
 import L from 'leaflet';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { numberFormat } from '@/lib/utils';
-
-type Order = Prisma.RecipeGetPayload<{
-  select: {
-    id: true;
-    address: true;
-    locationLat: true;
-    locationLng: true;
-    clientName: true;
-    status: true;
-    price: true;
-    employee: {
-      select: {
-        name: true;
-        avatarUrl: true;
-      };
-    };
-  };
-}>;
-interface ClientMapProps {
-  orders: Order[];
-}
+import type { RecipeWithEmployee } from '@/services/recipes';
 
 const createAvatarIcon = (url: string) =>
   new L.Icon({
@@ -39,7 +18,9 @@ const createAvatarIcon = (url: string) =>
     className: 'rounded-full shadow-md',
   });
 
-export const ClientMap: React.FC<ClientMapProps> = ({ orders }) => {
+export const ClientMap: React.FC<{ orders: RecipeWithEmployee[] }> = ({
+  orders,
+}) => {
   const center = [32.0853, 34.7818] as [number, number];
   const t = useTypedTranslations();
 

@@ -1,12 +1,11 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FieldType, RecipeStatus } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
 import { Loader2, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import type { Path, SubmitHandler } from 'react-hook-form';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import useSWR from 'swr';
 import { z } from 'zod';
 
 import { ParameterField } from '@/components/form/parameter-field';
@@ -32,6 +31,8 @@ import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { fetchAddressAndCoordinates } from '@/lib/fetchAddressAndCoordinates';
 import { getOrigin } from '@/lib/getOrigin';
 import { numberFormat } from '@/lib/utils';
+import { FieldType, RecipeStatus } from '@/services/types/enums';
+import { localFetch } from '@/services/utils/localFetch';
 
 const recipeStatuses = Object.values(RecipeStatus) as [
   RecipeStatus,
@@ -97,69 +98,35 @@ export const RecipeForm: React.FC<RecipeFormProps> = ({
     name: 'parameters',
   });
 
-  const { data: employees, isLoading: isLoadingEmployeeName } =
-    useSWR<{ id: string; name: string }[]>('/api/employees');
+  const { data: employees, isLoading: isLoadingEmployeeName } = useQuery<
+    { id: string; name: string }[]
+  >({
+    queryKey: ['employees'],
+    queryFn: () => localFetch('/employees'),
+  });
 
-  const onSubmit: SubmitHandler<RecipeFormData> = async (
-    data: RecipeFormData,
-  ): Promise<void> => {
+  const onSubmit: SubmitHandler<RecipeFormData> = async (data) => {
     try {
-      const formData = new FormData();
-      formData.append('employee', data.employee);
-      formData.append('clientName', data.clientName);
-      formData.append('status', data.status);
-      formData.append('address', data.address);
-      if (coordinates) {
-        formData.append('latitude', coordinates.lat.toString());
-        formData.append('longitude', coordinates.lng.toString());
-      }
-      if (data.price) formData.append('price', data.price.toString());
-      for (let index = 0; index < data.parameters.length; index++) {
-        const param = data.parameters[index];
-        formData.append(`parameters[${index}][name]`, param.name);
-        formData.append(`parameters[${index}][type]`, param.type);
-        formData.append(`parameters[${index}][order]`, param.order.toString());
-
-        if (param.type === FieldType.FILE) {
-          const fileInput = document.querySelector(
-            `input[name="parameters.${index}.file"]`,
-          ) as HTMLInputElement;
-
-          if (fileInput?.files?.[0]) {
-            formData.append(`parameters[${index}][file]`, fileInput.files[0]);
-            formData.append(
-              `parameters[${index}][description]`,
-              fileInput.files[0].name,
-            );
-          } else
-            formData.append(
-              `parameters[${index}][description]`,
-              param.description,
-            );
-        } else
-          formData.append(
-            `parameters[${index}][description]`,
-            param.description,
-          );
-      }
-
-      const res = await fetch('/api/recipes', {
+      const body = {
+        employeeId: data.employee,
+        clientName: data.clientName,
+        status: data.status,
+        address: data.address,
+        latitude: coordinates?.lat,
+        longitude: coordinates?.lng,
+        price: data.price,
+        parameters: data.parameters,
+      };
+      const result = await localFetch<{ id: string }>('/recipes', {
         method: 'POST',
-        body: formData,
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`HTTP ${res.status}: ${errorText}`);
-      }
-
-      const result = await res.json();
-      if (result.id) {
-        setRecipeId(result.id);
-        onQRCodeGenerated(`${getOrigin()}/recipes/${result.id}`);
-      } else {
-        throw new Error('No ID in response');
-      }
+      setRecipeId(result.id);
+      onQRCodeGenerated(`${getOrigin()}/recipes/${result.id}`);
     } catch (error) {
       console.error(
         'Submit error:',

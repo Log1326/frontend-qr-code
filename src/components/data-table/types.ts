@@ -6,5 +6,5 @@ export const schema = z.object({
   clientName: z.string(),
   price: z.number(),
   status: z.enum(['NEW', 'IN_PROGRESS', 'COMPLETED']),
-  createdAt: z.string(),
+  createdAt: z.date(),
 });

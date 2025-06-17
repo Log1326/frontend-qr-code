@@ -17,23 +17,16 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
-import type { Parameter, Recipe } from '@prisma/client';
-import { RecipeStatus } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import type { Socket } from 'socket.io-client';
-import useSWR from 'swr';
 
 import { Column } from '@/app/team/components/Column';
 import { statusColors, statusTitles } from '@/app/team/components/constant';
 import { cn } from '@/lib/utils';
-
-type RecipeWithParameters = Recipe & {
-  parameters: Parameter[];
-  employee: {
-    name: string;
-    avatarUrl?: string | null;
-  };
-};
+import { RecipeStatus } from '@/services/types/enums';
+import type { Recipe } from '@/services/types/Recipe';
+import { localFetch } from '@/services/utils/localFetch';
 
 interface KanbanBoardProps {
   socket: Socket;
@@ -44,9 +37,12 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ socket }) => {
     data: initialData,
     error,
     isLoading,
-  } = useSWR<RecipeWithParameters[]>('/api/recipes');
+  } = useQuery<Recipe[]>({
+    queryKey: ['recipes'],
+    queryFn: () => localFetch('/recipes'),
+  });
 
-  const [recipes, setRecipes] = useState<RecipeWithParameters[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [columnOrder] = useState<RecipeStatus[]>(Object.values(RecipeStatus));
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -144,7 +140,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ socket }) => {
       if (sourceColumn !== targetColumn) {
         updatedRecipes[movedRecipeIndex] = {
           ...updatedRecipes[movedRecipeIndex],
-          status: targetColumn as RecipeStatus,
+          status: targetColumn,
         };
       }
 
@@ -185,18 +181,6 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ socket }) => {
         });
 
         if (changedRecipes.length > 0) {
-          await fetch(`/api/recipes/reorder`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              status: targetColumn,
-              recipes: changedRecipes.map((r) => ({
-                id: r.id,
-                position: r.position,
-              })),
-            }),
-          });
-
           socket.emit('recipe-reordered', {
             status: targetColumn,
             recipes: changedRecipes.map((r) => r.id),
@@ -212,7 +196,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ socket }) => {
   const activeRecipe = activeId ? recipes.find((r) => r.id === activeId) : null;
 
   const getParameterValue = (
-    recipe: RecipeWithParameters,
+    recipe: Recipe,
     name: string,
   ): string | undefined => {
     return recipe.parameters.find(

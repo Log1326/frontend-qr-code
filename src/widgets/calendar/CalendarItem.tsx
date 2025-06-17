@@ -1,6 +1,5 @@
 'use client';
 
-import type { Employee, Recipe } from '@prisma/client';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useLocale } from 'next-intl';
@@ -12,6 +11,8 @@ import {
 } from '@/components/ui/tooltip';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { cn, formattedDate, numberFormat } from '@/lib/utils';
+import type { Employee } from '@/services/types/Employee';
+import type { Recipe } from '@/services/types/Recipe';
 
 export interface CalendarItemProps {
   recipe: Recipe;

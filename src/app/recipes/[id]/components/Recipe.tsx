@@ -1,5 +1,4 @@
 'use client';
-import type { Prisma } from '@prisma/client';
 import Image from 'next/image';
 import { useLocale } from 'next-intl';
 
@@ -9,19 +8,9 @@ import { Button } from '@/components/ui/button';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { downloadAsDoc } from '@/lib/documentGenerator';
 import { formattedDate, numberFormat } from '@/lib/utils';
+import type { RecipeWithEmployeeAndParameters } from '@/services/recipes';
 
-type RecipeWithParameters = Prisma.RecipeGetPayload<{
-  include: {
-    employee: {
-      select: {
-        name: true;
-      };
-    };
-    parameters: true;
-  };
-}>;
-
-export const Recipe: React.FC<{ recipe: RecipeWithParameters }> = ({
+export const Recipe: React.FC<{ recipe: RecipeWithEmployeeAndParameters }> = ({
   recipe,
 }) => {
   const t = useTypedTranslations();

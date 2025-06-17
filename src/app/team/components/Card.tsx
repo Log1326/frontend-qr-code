@@ -1,6 +1,5 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type { Parameter, Recipe } from '@prisma/client';
 import Image from 'next/image';
 
 import {
@@ -10,18 +9,9 @@ import {
 } from '@/app/team/components/constant';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { cn } from '@/lib/utils';
+import type { Recipe } from '@/services/types/Recipe';
 
-type RecipeWithParameters = Recipe & {
-  parameters: Parameter[];
-  employee: {
-    name: string;
-    avatarUrl?: string | null;
-  };
-};
-
-export const Card: React.FC<{ recipe: RecipeWithParameters }> = ({
-  recipe,
-}) => {
+export const Card: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
   const {
     attributes,
     listeners,

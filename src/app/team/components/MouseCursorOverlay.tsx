@@ -79,7 +79,7 @@ export const MouseCursorOverlay: React.FC<MouseCursorOverlayProps> = ({
       setCursors((prev) =>
         Object.fromEntries(
           Object.entries(prev).filter(
-            ([_id, cursor]) => now - cursor.lastSeen < 5000,
+            ([, cursor]) => now - cursor.lastSeen < 5000,
           ),
         ),
       );

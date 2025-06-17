@@ -73,7 +73,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => <ActionsCell id={row.id} />,
   },
 ];
-const CreatedAtCell: React.FC<{ date: string }> = ({ date }) => {
+const CreatedAtCell: React.FC<{ date: Date }> = ({ date }) => {
   const locale = useLocale();
   return (
     <div className="flex w-fit gap-1 text-muted-foreground [&_svg]:size-3">

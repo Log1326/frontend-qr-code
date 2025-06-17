@@ -1,9 +1,9 @@
 'use client';
 
-import type { RecipeStatus } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
+import type { RecipeStatus } from '@/services/types/enums';
 
 const STATUS_COLOR_MAP: Record<RecipeStatus, string> = {
   NEW: 'bg-blue-200 border-blue-500',

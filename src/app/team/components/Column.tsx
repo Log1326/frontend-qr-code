@@ -5,22 +5,16 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type { Parameter, Recipe, RecipeStatus } from '@prisma/client';
 
 import { Card } from '@/app/team/components/Card';
 import { statusColors, statusTitles } from '@/app/team/components/constant';
 import { cn } from '@/lib/utils';
+import type { RecipeStatus } from '@/services/types/enums';
+import type { Recipe } from '@/services/types/Recipe';
 
-type RecipeWithParameters = Recipe & {
-  parameters: Parameter[];
-  employee: {
-    name: string;
-    avatarUrl?: string | null;
-  };
-};
 interface ColumnProps {
   status: RecipeStatus;
-  recipes: RecipeWithParameters[];
+  recipes: Recipe[];
 }
 export const Column: React.FC<ColumnProps> = ({ status, recipes }) => {
   const { setNodeRef, attributes, listeners, transform, transition } =

@@ -8,6 +8,8 @@ export const numberFormat = (value: number): string =>
   new Intl.NumberFormat('he-IL', {
     style: 'currency',
     currency: 'ILS',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(value);
 export const formattedDate = ({
   date,

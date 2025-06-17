@@ -1,36 +1,37 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import type { Socket } from 'socket.io-client';
 import { io } from 'socket.io-client';
-import useSWR from 'swr';
 
 import { HeaderEmployees } from '@/app/team/components/HeaderEmployees';
 import { KanbanBoard } from '@/app/team/components/KanbanBoard';
 import { MouseCursorOverlay } from '@/app/team/components/MouseCursorOverlay';
 import { Skeleton } from '@/components/ui/skeleton';
+import { localFetch } from '@/services/utils/localFetch';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SOCKET_SITE_URL ?? '';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 export default function TeamPage() {
-  const { data: employees } =
-    useSWR<{ id: string; name: string }[]>('/api/employees');
+  const { data: employees } = useQuery<{ id: string; name: string }[]>({
+    queryKey: ['employees'],
+    queryFn: () => localFetch('/employees'),
+  });
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connectedEmployeeIds, setConnectedEmployeeIds] = useState<string[]>(
     [],
   );
   const [employeeId, setEmployeeId] = useState<string | null>(null);
-
-  const { data, error, isLoading } = useSWR<
-    {
-      name: string;
-      id: string;
-    }[]
-  >(
-    connectedEmployeeIds.length > 0
-      ? `/api/employees/list?ids=${connectedEmployeeIds.join(',')}`
-      : null,
-  );
+  const params = new URLSearchParams({
+    ids: connectedEmployeeIds.join(','),
+  });
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['connected-employees', connectedEmployeeIds],
+    queryFn: () =>
+      localFetch<{ id: string; name: string }[]>(`/employees/list?${params}`),
+    enabled: connectedEmployeeIds.length > 0,
+  });
 
   useEffect(() => {
     if (!employees) return;

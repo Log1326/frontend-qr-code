@@ -1,10 +1,11 @@
 'use client';
 
-import type { Employee, Recipe } from '@prisma/client';
 import { getDay, getDaysInMonth, isSameDay } from 'date-fns';
 import { useContext } from 'react';
 
 import { cn } from '@/lib/utils';
+import type { Employee } from '@/services/types/Employee';
+import type { Recipe } from '@/services/types/Recipe';
 import { CalendarItem } from '@/widgets/calendar/CalendarItem';
 import { OutOfBoundsDay } from '@/widgets/calendar/Components';
 import { CalendarContext } from '@/widgets/calendar/Context';

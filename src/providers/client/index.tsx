@@ -2,8 +2,8 @@
 
 import type { PropsWithChildren } from 'react';
 
-import { SWRProvider } from '@/providers/SwrProvider';
-import { ThemeProvider } from '@/providers/ThemeProvider';
+import { ReactQueryProvider } from '@/providers/client/ReactQueryProvider';
+import { ThemeProvider } from '@/providers/client/ThemeProvider';
 
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -12,7 +12,7 @@ export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange>
-      <SWRProvider>{children}</SWRProvider>
+      <ReactQueryProvider>{children}</ReactQueryProvider>
     </ThemeProvider>
   );
 };

@@ -16,33 +16,18 @@ interface ColumnProps {
   status: RecipeStatus;
   recipes: Recipe[];
 }
+
 export const Column: React.FC<ColumnProps> = ({ status, recipes }) => {
-  const { setNodeRef, attributes, listeners, transform, transition } =
-    useSortable({
-      id: status,
-      data: {
-        type: 'column',
-        columnId: status,
-      },
-    });
-  const { setNodeRef: setDroppableRef } = useDroppable({
-    id: `${status}-droppable`,
-    data: { type: 'column', columnId: status },
+  const { setNodeRef: setDroppableRef, isOver } = useDroppable({
+    id: status,
+    data: {
+      type: 'column',
+      columnId: status,
+    },
   });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={cn(
-        'flex min-w-80 flex-col rounded-lg bg-secondary transition-colors',
-      )}>
+    <div className="flex min-w-80 flex-col rounded-lg bg-secondary transition-colors">
       <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-lg p-3">
         <div className="flex items-center gap-2">
           <span className={cn('h-3 w-3 rounded-full', statusColors[status])} />
@@ -54,22 +39,45 @@ export const Column: React.FC<ColumnProps> = ({ status, recipes }) => {
       </div>
 
       <div
+        data-column-id={status}
         ref={setDroppableRef}
-        className="min-h-[150px] flex-1 space-y-3 overflow-y-auto p-3">
+        className={cn(
+          'min-h-[150px] flex-1 space-y-3 overflow-y-auto p-3',
+          isOver && 'bg-blue-100',
+        )}>
         <SortableContext
-          items={recipes.map((r) => r.id)}
+          items={
+            recipes.length > 0 ? recipes.map((r) => r.id) : ['__placeholder__']
+          }
           strategy={verticalListSortingStrategy}>
-          {recipes.map((recipe) => (
-            <Card key={recipe.id} recipe={recipe} />
-          ))}
+          {recipes.length > 0 ? (
+            recipes.map((recipe) => <Card key={recipe.id} recipe={recipe} />)
+          ) : (
+            <SortablePlaceholder />
+          )}
         </SortableContext>
-
-        {recipes.length === 0 && (
-          <div className="flex h-32 items-center justify-center rounded border-2 border-dashed border-gray-300 bg-white text-gray-400">
-            Перетащите сюда задачи
-          </div>
-        )}
       </div>
+    </div>
+  );
+};
+
+const SortablePlaceholder = () => {
+  const { setNodeRef, attributes, listeners, transform, transition } =
+    useSortable({ id: '__placeholder__' });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={style}
+      className="flex h-32 items-center justify-center rounded border-2 border-dashed border-gray-300 bg-white text-gray-400">
+      Перетащите сюда задачи
     </div>
   );
 };

@@ -183,7 +183,10 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ socket }) => {
         if (changedRecipes.length > 0) {
           socket.emit('recipe-reordered', {
             status: targetColumn,
-            recipes: changedRecipes.map((r) => r.id),
+            recipes: changedRecipes.map((r) => ({
+              id: r.id,
+              position: r.position,
+            })),
           });
         }
       } catch (error) {

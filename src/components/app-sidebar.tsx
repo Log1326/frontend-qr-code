@@ -29,6 +29,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import type { MessageKeys } from '@/hooks/useTypedTranslations';
+import { useUserStore } from '@/store/userStore';
 
 const data: {
   user: { name: string; email: string; avatar: string };
@@ -60,6 +61,7 @@ export const AppSidebar: React.FC<React.ComponentProps<typeof Sidebar>> = ({
   ...props
 }) => {
   const locale = useLocale();
+  const { user } = useUserStore();
   return (
     <Sidebar
       side={locale === 'he' ? 'right' : 'left'}
@@ -83,7 +85,7 @@ export const AppSidebar: React.FC<React.ComponentProps<typeof Sidebar>> = ({
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );

@@ -3,9 +3,6 @@ import '@/app/globals.css';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
-import { AppSidebar } from '@/components/app-sidebar';
-import { SiteHeader } from '@/components/site-header';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { getLocale } from '@/i18n/locale';
 import { Providers } from '@/providers/client';
 import { I18nProvider } from '@/providers/server/i18nProvider';
@@ -95,17 +92,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-background antialiased`}>
         <I18nProvider>
-          <Providers>
-            <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>
-                <SiteHeader />
-                <div className="flex flex-col items-center justify-center gap-3">
-                  {children}
-                </div>
-              </SidebarInset>
-            </SidebarProvider>
-          </Providers>
+          <Providers>{children}</Providers>
         </I18nProvider>
       </body>
     </html>

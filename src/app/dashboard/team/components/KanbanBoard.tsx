@@ -21,12 +21,16 @@ import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import type { Socket } from 'socket.io-client';
 
-import { Column } from '@/app/team/components/Column';
-import { statusColors, statusTitles } from '@/app/team/components/constant';
+import { ColumnKanban } from '@/app/dashboard/team/components/ColumnKanban';
+import {
+  statusColors,
+  statusTitles,
+} from '@/app/dashboard/team/components/constant';
 import { cn } from '@/lib/utils';
-import { RecipeStatus } from '@/services/types/enums';
-import type { Recipe } from '@/services/types/Recipe';
 import { localFetch } from '@/services/utils/localFetch';
+import { RecipeStatus } from '@/types/models/enums';
+import type { Parameter } from '@/types/models/Parameter';
+import type { Recipe } from '@/types/models/Recipe';
 
 interface KanbanBoardProps {
   socket: Socket;
@@ -203,7 +207,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ socket }) => {
     name: string,
   ): string | undefined => {
     return recipe.parameters.find(
-      (p) => p.name.toLowerCase() === name.toLowerCase(),
+      (p: Parameter) => p.name.toLowerCase() === name.toLowerCase(),
     )?.description;
   };
 
@@ -222,7 +226,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ socket }) => {
             items={columnOrder}
             strategy={horizontalListSortingStrategy}>
             {columnOrder.map((status) => (
-              <Column
+              <ColumnKanban
                 key={status}
                 status={status}
                 recipes={recipesByStatus(status)}
@@ -240,7 +244,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ socket }) => {
               <div className="p-3">
                 <h3 className="text-base font-semibold">
                   {getParameterValue(activeRecipe, 'Название') ??
-                    activeRecipe.clientName}
+                    activeRecipe.client?.name}
                 </h3>
                 {getParameterValue(activeRecipe, 'Описание') && (
                   <p className="text-sm text-muted-foreground">

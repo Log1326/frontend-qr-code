@@ -4,15 +4,15 @@ import { getDay, getDaysInMonth, isSameDay } from 'date-fns';
 import { useContext } from 'react';
 
 import { cn } from '@/lib/utils';
-import type { Employee } from '@/services/types/Employee';
-import type { Recipe } from '@/services/types/Recipe';
+import type { Recipe } from '@/types/models/Recipe';
+import type { User } from '@/types/models/User';
 import { CalendarItem } from '@/widgets/calendar/CalendarItem';
 import { OutOfBoundsDay } from '@/widgets/calendar/Components';
 import { CalendarContext } from '@/widgets/calendar/Context';
 
 interface CalendarBodyProps {
   recipes: Recipe[];
-  employees: Employee[];
+  employees: User[];
 }
 
 export const CalendarBody: React.FC<CalendarBodyProps> = ({

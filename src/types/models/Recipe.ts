@@ -1,13 +1,14 @@
-import type { Employee } from '@/services/types/Employee';
-import type { RecipeStatus } from '@/services/types/enums';
-import type { Parameter } from '@/services/types/Parameter';
-import type { RecipeEvent } from '@/services/types/RecipeEvent';
+import type { RecipeStatus } from '@/types/models/enums';
+import type { Parameter } from '@/types/models/Parameter';
+import type { RecipeEvent } from '@/types/models/RecipeEvent';
+import type { User } from '@/types/models/User';
 
 export type Recipe = {
   id: string;
   employeeId: string;
-  employee: Employee;
-  clientName: string;
+  employee: User;
+  clientId?: string | null;
+  client?: User | null;
   price: number;
   status: RecipeStatus;
   parameters: Parameter[];

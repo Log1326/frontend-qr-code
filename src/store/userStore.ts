@@ -1,12 +1,7 @@
 import { create } from 'zustand';
 
-type User = {
-  id: string;
-  email: string;
-  name: string;
-  avatar: string;
-  role: string;
-};
+import { AuthProvider, Role } from '@/types/models/enums';
+import type { User } from '@/types/models/User';
 
 type UserState = {
   user: User;
@@ -15,7 +10,23 @@ type UserState = {
   setAuth: (value: boolean) => void;
 };
 
-const initialUser = { avatar: '', email: '', id: '', name: '', role: '' };
+const initialUser: User = {
+  id: '',
+  email: '',
+  password: null,
+  name: '',
+  avatarUrl: null,
+  role: Role.CLIENT,
+  socialId: null,
+  provider: AuthProvider.EMAIL,
+  createdAt: new Date(),
+  organizationId: null,
+  organization: null,
+  recipes: [],
+  clientRecipes: [],
+  roleHistory: [],
+  changedRoles: [],
+};
 
 export const useUserStore = create<UserState>((set) => ({
   user: initialUser,

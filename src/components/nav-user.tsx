@@ -6,6 +6,7 @@ import {
   MoreVerticalIcon,
   UserCircleIcon,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -25,20 +26,20 @@ import {
 } from '@/components/ui/sidebar';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { authService } from '@/services/authService';
+import type { User } from '@/types/models/User';
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    id: string;
-    email: string;
-    avatar: string;
-    name: string;
-    role: string;
-  };
-}) {
+interface NavUserProsps {
+  user?: User;
+}
+
+export const NavUser: React.FC<NavUserProsps> = ({ user }) => {
+  const router = useRouter();
   const { isMobile } = useSidebar();
   const t = useTypedTranslations();
+  const handleLogout = () => {
+    authService.logout();
+    router.replace('/login');
+  };
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -48,7 +49,7 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user?.avatar} alt={user?.name} />
+                <AvatarImage src={user?.avatarUrl ?? ''} alt={user?.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -68,7 +69,7 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user?.avatar} alt={user?.name} />
+                  <AvatarImage src={user?.avatarUrl ?? ''} alt={user?.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -91,7 +92,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => authService.logout()}>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOutIcon />
               {t('logOut')}
             </DropdownMenuItem>
@@ -100,4 +101,4 @@ export function NavUser({
       </SidebarMenuItem>
     </SidebarMenu>
   );
-}
+};

@@ -31,8 +31,8 @@ import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { fetchAddressAndCoordinates } from '@/lib/fetchAddressAndCoordinates';
 import { getOrigin } from '@/lib/getOrigin';
 import { numberFormat } from '@/lib/utils';
-import { FieldType, RecipeStatus } from '@/services/types/enums';
 import { localFetch } from '@/services/utils/localFetch';
+import { FieldType, RecipeStatus } from '@/types/models/enums';
 
 const recipeStatuses = Object.values(RecipeStatus) as [
   RecipeStatus,

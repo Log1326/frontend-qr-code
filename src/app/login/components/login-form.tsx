@@ -26,7 +26,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { authService } from '@/services/authService';
-import { useUserStore } from '@/store/userStore';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
@@ -39,7 +38,6 @@ export const LoginForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { setUser } = useUserStore();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     mode: 'onChange',
@@ -53,8 +51,7 @@ export const LoginForm = () => {
     setError(null);
     setLoading(true);
     try {
-      const data = await authService.login(values.email, values.password);
-      setUser(data.user);
+      await authService.login(values.email, values.password);
       router.replace('/dashboard');
     } catch {
       setError('Login wrong!');

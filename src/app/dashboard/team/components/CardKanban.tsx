@@ -6,12 +6,12 @@ import {
   statusBorderColors,
   statusColors,
   statusTitles,
-} from '@/app/team/components/constant';
+} from '@/app/dashboard/team/components/constant';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { cn } from '@/lib/utils';
-import type { Recipe } from '@/services/types/Recipe';
+import type { Recipe } from '@/types/models/Recipe';
 
-export const Card: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
+export const CardKanban: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
   const {
     attributes,
     listeners,
@@ -48,7 +48,7 @@ export const Card: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
       />
       <div className="space-y-2 p-3">
         <h3 className="font-medium text-gray-900 dark:text-gray-100">
-          {t('clientName')}: {recipe.clientName}
+          {t('clientName')}: {recipe.client?.name}
         </h3>
         <p className="text-sm text-gray-700 dark:text-gray-300">
           {t('employee')}: {recipe.employee.name}

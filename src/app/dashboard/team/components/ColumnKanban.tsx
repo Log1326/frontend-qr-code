@@ -6,18 +6,21 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import { Card } from '@/app/team/components/Card';
-import { statusColors, statusTitles } from '@/app/team/components/constant';
+import { CardKanban } from '@/app/dashboard/team/components/CardKanban';
+import {
+  statusColors,
+  statusTitles,
+} from '@/app/dashboard/team/components/constant';
 import { cn } from '@/lib/utils';
-import type { RecipeStatus } from '@/services/types/enums';
-import type { Recipe } from '@/services/types/Recipe';
+import type { RecipeStatus } from '@/types/models/enums';
+import type { Recipe } from '@/types/models/Recipe';
 
 interface ColumnProps {
   status: RecipeStatus;
   recipes: Recipe[];
 }
 
-export const Column: React.FC<ColumnProps> = ({ status, recipes }) => {
+export const ColumnKanban: React.FC<ColumnProps> = ({ status, recipes }) => {
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({
     id: status,
     data: {
@@ -51,7 +54,9 @@ export const Column: React.FC<ColumnProps> = ({ status, recipes }) => {
           }
           strategy={verticalListSortingStrategy}>
           {recipes.length > 0 ? (
-            recipes.map((recipe) => <Card key={recipe.id} recipe={recipe} />)
+            recipes.map((recipe) => (
+              <CardKanban key={recipe.id} recipe={recipe} />
+            ))
           ) : (
             <SortablePlaceholder />
           )}

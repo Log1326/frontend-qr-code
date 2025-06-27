@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { Recipe } from '@/app/recipes/[id]/components/Recipe';
-import { recipeService } from '@/services/recipes';
+import { Recipe } from '@/app/dashboard/recipes/[id]/components/Recipe';
+import { recipeService } from '@/services/recipeService';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -18,16 +18,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
   return {
-    title: `Recipe for ${recipe.clientName}`,
+    title: `Recipe for ${recipe?.client?.name}`,
     description: `Created by ${recipe.status}`,
     openGraph: {
-      title: `Recipe for ${recipe.clientName}`,
+      title: `Recipe for ${recipe.client?.name}`,
       description: `Created by ${recipe.status}`,
       images: recipe.qrCodeUrl ? [recipe.qrCodeUrl] : undefined,
     },
     twitter: {
       card: 'summary_large_image',
-      title: `Recipe for ${recipe.clientName}`,
+      title: `Recipe for ${recipe.client?.name}`,
       description: `Created by ${recipe.status}`,
       images: recipe.qrCodeUrl ? [recipe.qrCodeUrl] : undefined,
     },

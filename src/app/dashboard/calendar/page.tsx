@@ -1,4 +1,4 @@
-import { recipeService } from '@/services/recipes';
+import { recipeService } from '@/services/recipeService';
 import {
   CalendarBody,
   CalendarDate,

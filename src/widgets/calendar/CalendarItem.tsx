@@ -11,12 +11,12 @@ import {
 } from '@/components/ui/tooltip';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { cn, formattedDate, numberFormat } from '@/lib/utils';
-import type { Employee } from '@/services/types/Employee';
-import type { Recipe } from '@/services/types/Recipe';
+import type { Recipe } from '@/types/models/Recipe';
+import type { User } from '@/types/models/User';
 
 export interface CalendarItemProps {
   recipe: Recipe;
-  employee: Employee;
+  employee: User;
   className?: string;
 }
 
@@ -56,7 +56,7 @@ export const CalendarItem: React.FC<CalendarItemProps> = ({
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <div className="truncate font-medium">{recipe.clientName}</div>
+            <div className="truncate font-medium">{recipe.client?.name}</div>
             <div className="truncate text-xs text-gray-600">
               {format(new Date(recipe.createdAt), 'HH:mm')} • {employee.name}
             </div>
@@ -67,7 +67,7 @@ export const CalendarItem: React.FC<CalendarItemProps> = ({
       <TooltipContent
         side={locale === 'he' ? 'left' : 'right'}
         className="max-w-xs break-words bg-muted-foreground text-background">
-        <div className="text-sm font-medium">{recipe.clientName}</div>
+        <div className="text-sm font-medium">{recipe.client?.name}</div>
         <div className="text-xs">
           {t('status')}: {t(recipe.status)}
         </div>

@@ -1,5 +1,5 @@
-import { ClientMap } from '@/app/map/components/ClientMap';
-import { recipeService } from '@/services/recipes';
+import { ClientMap } from '@/app/dashboard/map/components/ClientMap';
+import { recipeService } from '@/services/recipeService';
 
 export default async function OrderMap() {
   const orders = await recipeService.getInfoWithGeo();

@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 
 import { cn } from '@/lib/utils';
-import type { RecipeStatus } from '@/services/types/enums';
+import type { RecipeStatus } from '@/types/models/enums';
 
 const STATUS_COLOR_MAP: Record<RecipeStatus, string> = {
   NEW: 'bg-blue-200 border-blue-500',

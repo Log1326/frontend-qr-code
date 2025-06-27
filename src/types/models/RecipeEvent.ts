@@ -1,5 +1,6 @@
-import type { EventType } from '@/services/types/enums';
-import type { Recipe } from '@/services/types/Recipe';
+import type { EventType } from 'react-hook-form';
+
+import type { Recipe } from '@/types/models/Recipe';
 
 export type RecipeEvent = {
   id: string;

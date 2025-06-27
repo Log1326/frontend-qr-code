@@ -16,13 +16,13 @@ export const localFetch = async <T = unknown>(
 
     if (!res.ok) {
       const errorText = await res.text();
-      throw new Error(`Ошибка ${res.status}: ${errorText}`);
+      throw new Error(`Error ${res.status}: ${errorText}`);
     }
 
     const data = await res.json();
     return data;
   } catch (error) {
     console.error('Fetch error:', error);
-    throw new Error('Произошла ошибка при выполнении запроса');
+    throw new Error('Error happend during request');
   }
 };

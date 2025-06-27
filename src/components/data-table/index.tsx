@@ -28,7 +28,7 @@ import { useState } from 'react';
 import type { z } from 'zod';
 
 import { columns } from '@/components/data-table/constants';
-import type { schema } from '@/components/data-table/types';
+import type { typeDataTableSchema } from '@/components/data-table/types';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -61,7 +61,7 @@ import { cn } from '@/lib/utils';
 export function DataTable({
   data: initialData,
 }: {
-  data: z.infer<typeof schema>[];
+  data: z.infer<typeof typeDataTableSchema>[];
 }) {
   const t = useTypedTranslations();
   const [data] = useState(() => initialData);

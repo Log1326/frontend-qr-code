@@ -2,13 +2,13 @@
 import Image from 'next/image';
 import { useLocale } from 'next-intl';
 
-import { renderers } from '@/app/recipes/[id]/components/Renderers';
+import { renderers } from '@/app/dashboard/recipes/[id]/components/Renderers';
 import { ShareButton } from '@/components/share-button';
 import { Button } from '@/components/ui/button';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { downloadAsDoc } from '@/lib/documentGenerator';
 import { formattedDate, numberFormat } from '@/lib/utils';
-import type { RecipeWithEmployeeAndParameters } from '@/services/recipes';
+import type { RecipeWithEmployeeAndParameters } from '@/services/recipeService';
 
 export const Recipe: React.FC<{ recipe: RecipeWithEmployeeAndParameters }> = ({
   recipe,
@@ -34,7 +34,7 @@ export const Recipe: React.FC<{ recipe: RecipeWithEmployeeAndParameters }> = ({
           </p>
           <p className="text-sm">
             <span className="font-medium">{t('clientName')}:&nbsp;</span>
-            {recipe.clientName}
+            {recipe.client?.name}
           </p>
           <p className="text-sm">
             <span className="font-medium">{t('status')}:&nbsp;</span>

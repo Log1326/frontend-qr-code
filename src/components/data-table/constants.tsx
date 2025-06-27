@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import type z from 'zod';
 
-import type { schema } from '@/components/data-table/types';
+import type { typeDataTableSchema } from '@/components/data-table/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,7 +23,7 @@ import type { MessageKeys } from '@/hooks/useTypedTranslations';
 import { useTypedTranslations } from '@/hooks/useTypedTranslations';
 import { formattedDate, numberFormat } from '@/lib/utils';
 
-export const columns: ColumnDef<z.infer<typeof schema>>[] = [
+export const columns: ColumnDef<z.infer<typeof typeDataTableSchema>>[] = [
   {
     accessorKey: 'employeeName',
     header: 'employeeName',
@@ -42,7 +42,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
     enableSorting: false,
     cell: ({ row }) => (
       <div className="w-fit">
-        <div className="text-muted-foreground">{row.original.clientName}</div>
+        <div className="text-muted-foreground">{row.original.client}</div>
       </div>
     ),
   },

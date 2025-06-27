@@ -1,4 +1,4 @@
-import { RecipeStatus } from '@/services/types/enums';
+import { RecipeStatus } from '@/types/models/enums';
 
 export const statusTitles: Record<RecipeStatus, string> = {
   [RecipeStatus.NEW]: 'Новые',

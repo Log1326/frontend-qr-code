@@ -8,7 +8,7 @@ import {
 } from 'docx';
 import { saveAs } from 'file-saver';
 
-import type { Recipe } from '@/services/types/Recipe';
+import type { Recipe } from '@/types/models/Recipe';
 
 export const downloadAsDoc = async (recipe: Recipe): Promise<void> => {
   try {
@@ -18,7 +18,7 @@ export const downloadAsDoc = async (recipe: Recipe): Promise<void> => {
       new Paragraph({
         children: [
           new TextRun({
-            text: `🧾 Заказ от: ${recipe.clientName}`,
+            text: `🧾 Заказ от: ${recipe.client?.name}`,
             bold: true,
           }),
         ],
@@ -119,7 +119,7 @@ export const downloadAsDoc = async (recipe: Recipe): Promise<void> => {
     });
 
     const blob = await Packer.toBlob(doc);
-    saveAs(blob, `${recipe.clientName}_recipe.docx`);
+    saveAs(blob, `${recipe.client?.name}_recipe.docx`);
   } catch (error) {
     console.log('Ошибка создания документа:', error);
   }

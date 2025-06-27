@@ -1,13 +1,8 @@
 import { localFetch } from '@/services/utils/localFetch';
+import type { User } from '@/types/models/User';
 
 type LoginResponse = {
-  user: {
-    id: string;
-    email: string;
-    avatar: string;
-    name: string;
-    role: string;
-  };
+  user: User;
 };
 
 export const authService = {
@@ -21,7 +16,7 @@ export const authService = {
   },
 
   async getCurrentUser(): Promise<LoginResponse['user'] | null> {
-    return localFetch<LoginResponse['user'] | null>('/auth/me', {
+    return localFetch<LoginResponse['user'] | null>('/user/profile', {
       credentials: 'include',
     });
   },
@@ -29,6 +24,7 @@ export const authService = {
   async logout() {
     return localFetch('/auth/logout', {
       method: 'POST',
+      credentials: 'include',
     });
   },
 };

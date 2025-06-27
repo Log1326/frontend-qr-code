@@ -1,5 +1,5 @@
-import type { FieldType } from '@/services/types/enums';
-import type { Recipe } from '@/services/types/Recipe';
+import type { FieldType } from '@/types/models/enums';
+import type { Recipe } from '@/types/models/Recipe';
 
 export type Parameter = {
   id: string;

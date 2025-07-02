@@ -8,6 +8,7 @@ export const localFetch = async <T = unknown>(
     const isFormData = options?.body instanceof FormData;
     const res = await fetch(`${SITE_URL}${endpoint}`, {
       ...options,
+      credentials: 'include',
       headers: {
         ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
         ...(options?.headers || {}),

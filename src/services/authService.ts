@@ -9,22 +9,27 @@ export const authService = {
   async login(email: string, password: string): Promise<LoginResponse> {
     return localFetch<LoginResponse>('/auth/login', {
       method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
   },
-
-  async getCurrentUser(): Promise<LoginResponse['user'] | null> {
-    return localFetch<LoginResponse['user'] | null>('/user/profile', {
-      credentials: 'include',
+  async signUpWithOrganization(data: {
+    organizationName: string;
+    email: string;
+    name: string;
+    password: string;
+  }) {
+    return localFetch('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
+  },
+  async getCurrentUser(): Promise<LoginResponse['user'] | null> {
+    return localFetch<LoginResponse['user'] | null>('/user/profile');
   },
 
   async logout() {
     return localFetch('/auth/logout', {
       method: 'POST',
-      credentials: 'include',
     });
   },
 };

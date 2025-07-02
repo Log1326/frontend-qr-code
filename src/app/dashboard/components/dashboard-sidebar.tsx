@@ -33,7 +33,9 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ user }) => {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5">
               <Link href="/">
-                <span className="text-base font-semibold">Furniture Inc.</span>
+                <span className="text-base font-semibold">
+                  {user?.organization?.name} Inc.
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

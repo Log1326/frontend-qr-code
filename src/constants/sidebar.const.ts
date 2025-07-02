@@ -27,7 +27,12 @@ const sidebarItems: {
   navSecondary: SidebarItem[];
 } = {
   navMain: [
-    { title: 'panel', url: '/dashboard/panel', icon: LayoutDashboardIcon },
+    {
+      title: 'panel',
+      url: '/dashboard/panel',
+      icon: LayoutDashboardIcon,
+      roles: [Role.ADMIN, Role.SUPERUSER],
+    },
     {
       title: 'analytics',
       url: '/dashboard/analytics',

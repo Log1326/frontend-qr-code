@@ -1,3 +1,9 @@
+import { InviteForm } from '@/app/dashboard/settings/components/InviteForm';
+
 export default function SettingsPage() {
-  return <div>SettingsPage</div>;
+  return (
+    <div>
+      <InviteForm />
+    </div>
+  );
 }

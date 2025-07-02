@@ -3,6 +3,7 @@ import '@/app/globals.css';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import { Toaster } from '@/components/ui/sonner';
 import { getLocale } from '@/i18n/locale';
 import { Providers } from '@/providers/client';
 import { I18nProvider } from '@/providers/server/i18nProvider';
@@ -93,6 +94,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} bg-background antialiased`}>
         <I18nProvider>
           <Providers>{children}</Providers>
+          <Toaster />
         </I18nProvider>
       </body>
     </html>

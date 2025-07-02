@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -30,13 +31,13 @@ import { authService } from '@/services/authService';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? '';
 
 const loginSchema = z.object({
-  email: z.string().email('wrong'),
-  password: z.string().min(6, 'is min 6 symbols'),
+  email: z.string().email('Invalid email'),
+  password: z.string().min(6, 'Minimum 6 characters'),
 });
 
 export const LoginForm = () => {
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -48,15 +49,16 @@ export const LoginForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
-    setError(null);
-    setLoading(true);
+    setIsError(false);
+    setIsLoading(true);
     try {
       await authService.login(values.email, values.password);
       router.replace('/dashboard');
     } catch {
-      setError('Login wrong!');
+      setIsError(true);
+      toast.error('Something went wrong');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -145,12 +147,13 @@ export const LoginForm = () => {
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
+                          error={!!form.formState.errors.email}
                           type="email"
                           placeholder="m@example.com"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage className="absolute -top-[0.31rem] left-[2.5rem]" />
+                      <FormMessage className="absolute -top-[0.31rem] right-1" />
                     </FormItem>
                   )}
                 />
@@ -161,30 +164,33 @@ export const LoginForm = () => {
                     <FormItem className="relative">
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input type="password" {...field} />
+                        <Input
+                          error={!!form.formState.errors.password}
+                          type="password"
+                          {...field}
+                        />
                       </FormControl>
-                      <FormMessage className="absolute -top-[0.31rem] left-[4.1rem]" />
+                      <FormMessage className="absolute -top-[0.31rem] right-1" />
                     </FormItem>
                   )}
                 />
-                {error && (
-                  <div className="text-sm font-medium text-red-500">
-                    {error}
-                  </div>
-                )}
+
                 <Button
                   type="submit"
                   className="mt-2 w-full"
-                  disabled={loading}>
-                  {loading ? 'Loading...' : 'Login'}
+                  variant={isError ? 'destructive' : 'default'}
+                  disabled={isLoading}>
+                  {isLoading ? 'Loading...' : 'Login'}
                 </Button>
               </form>
             </Form>
             <div className="text-center text-sm">
               Don&apos;t have an account?{' '}
-              <a href="#" className="underline underline-offset-4">
+              <Link
+                href="/auth?mode=sign-up"
+                className="underline underline-offset-4">
                 Sign up
-              </a>
+              </Link>
             </div>
           </div>
         </CardContent>

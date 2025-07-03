@@ -3,7 +3,7 @@ import type { Role } from '@/types/models/enums';
 
 export const organizationService = {
   async getInviteInfo(token: string): Promise<{ email: string; role: string }> {
-    return localFetch(`/organizations/invite-info?token=${token}`);
+    return localFetch(`/organizations/invite/${token}`);
   },
   async registerByInvite(data: {
     name: string;

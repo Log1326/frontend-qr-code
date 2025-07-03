@@ -52,7 +52,9 @@ export const LoginForm = () => {
     setIsError(false);
     setIsLoading(true);
     try {
-      await authService.login(values.email, values.password);
+      const res = await authService.login(values.email, values.password);
+      console.log(res);
+
       router.replace('/dashboard');
     } catch {
       setIsError(true);

@@ -12,6 +12,7 @@ export const useUser = (): {
   const { setUser } = useUserStore();
   const { data: user, isLoading } = useQuery({
     queryKey: ['currentUser'],
+    staleTime: 0,
     queryFn: userService.getCurrentUser,
     retry: false,
   });
